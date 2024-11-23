@@ -5,14 +5,18 @@
 void drawGrid(int x, int y)
 {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
 
     for (int linha = 0; linha <= LINHAS; linha++)
     {
         for (int coluna = 0; coluna <= COLUNAS; coluna++)
         {
-            if (coluna == x && linha == y) DrawCircle(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO, GREEN);
-            else DrawCircle(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO, RED);
+            if (coluna == x && linha == y) 
+            {
+                Rectangle cursor = {coluna*LADO, linha*LADO, LADO, LADO};
+                DrawRectangleLinesEx(cursor, 3, YELLOW);
+            }
+            DrawCircle(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO, RED);
         }
     }
     EndDrawing();

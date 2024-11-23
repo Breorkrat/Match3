@@ -1,8 +1,7 @@
 #include <raylib.h>
 #include <string.h>
 #include <time.h>
-#include "../include/logic.h"
-
+#include "include/logic.h"
 
 int main(void)
 {
