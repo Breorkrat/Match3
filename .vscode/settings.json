@@ -9,6 +9,7 @@
 		"**/*.exe": true,
 	},
 	"files.associations": {
-		"logic.h": "c"
+		"logic.h": "c",
+		"raylib.h": "c"
 	}
 }
