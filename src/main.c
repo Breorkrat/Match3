@@ -10,32 +10,29 @@
 #define LARGURA COLUNAS*LADO
 #define ALTURA LINHAS*LADO
 
-void drawGrid();
-int updateX(int curX);
-int updateY(int curY);
-
-int x, y;
+void drawGrid(int x, int y);
+void updatePos(int cursor[2]);
 
 int main(void)
 {
     SetRandomSeed(time(NULL));
-    x = GetRandomValue(0, COLUNAS-1);
-    y = GetRandomValue(0, LINHAS-1);
+    int cursor[2];
+    cursor[0] = GetRandomValue(0, COLUNAS-1);
+    cursor[1] = GetRandomValue(0, LINHAS-1);
 
-    InitWindow(LARGURA, ALTURA, "Atividade - Matheus");
+    InitWindow(LARGURA, ALTURA, "Match3");
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
     {
-        x = updateX(x);
-        y = updateY(y);
-        drawGrid();
+        updatePos(cursor);
+        drawGrid(cursor[0], cursor[1]);
     }
     CloseWindow();
     return 0;
 }
 
-void drawGrid()
+void drawGrid(int x, int y)
 {
     BeginDrawing();
     ClearBackground(RAYWHITE);
@@ -51,28 +48,22 @@ void drawGrid()
     EndDrawing();
 }
 
-int updateX(int curX){
+void updatePos(int cursor[2]){
 
-        if (IsKeyPressed(KEY_RIGHT))
+    if (IsKeyPressed(KEY_RIGHT))
         {
-            if (curX < COLUNAS-1) curX ++;
+            if (cursor[0] < COLUNAS-1) cursor[0]++;
         }
-        else if (IsKeyPressed(KEY_LEFT))
+    else if (IsKeyPressed(KEY_LEFT))
         {
-            if (curX > 0) curX--;
+            if (cursor[0] > 0) cursor[0]--;
         }
-        return curX;
-}
-
-int updateY(int curY){
-
-        if (IsKeyPressed(KEY_UP))
+    if (IsKeyPressed(KEY_UP))
         {
-            if (curY > 0) curY --;
+            if (cursor[1] > 0) cursor[1]--;
         }
         else if (IsKeyPressed(KEY_DOWN))
         {
-            if (curY < LINHAS-1) curY++;
+            if (cursor[1] < LINHAS-1) cursor[1]++;
         }
-        return curY;
 }
