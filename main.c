@@ -6,6 +6,7 @@
 int main(void)
 {
     // Inicializa uma posição aleatória para o cursor
+    int j = 12;
     SetRandomSeed(time(NULL));
     int cursor[2];
     cursor[0] = GetRandomValue(0, COLUNAS-1);
