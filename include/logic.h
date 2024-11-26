@@ -4,7 +4,7 @@
 #include "consts.h"
 
 // Desenha a grade com o cursor na posição x y
-void drawGrid(int tabuleiro[LINHAS][COLUNAS], int x, int y)
+void drawGrid(int tabuleiro[LINHAS][COLUNAS], int x, int y, unsigned char selecionado)
 {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -16,36 +16,47 @@ void drawGrid(int tabuleiro[LINHAS][COLUNAS], int x, int y)
             if (coluna == x && linha == y) 
             {
                 Rectangle cursor = {coluna*LADO, linha*LADO, LADO, LADO};
-                DrawRectangleLinesEx(cursor, 3, YELLOW);
+                DrawRectangleLinesEx(cursor, 3, (selecionado ? RED : YELLOW));
             }
             int ind = tabuleiro[linha][coluna];
             Color cor = CORES[ind];
-            fflush(stdout);
             DrawCircle(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO, cor);
         }
-        printf("\n");
     }
     EndDrawing();
 }
 
-// Atualiza a posição do cursor
-void updatePos(int cursor[2]){
+// Troca duas peças de posição
+void swapCells(int tabuleiro[LINHAS][COLUNAS], int current[2], int final[2]){
+    int buffer = tabuleiro[final[1]][final[0]];
 
+    tabuleiro[final[1]][final[0]] = tabuleiro[current[1]][current[0]];
+    tabuleiro[current[1]][current[0]] = buffer;
+    selecionado = 0;
+}
+
+// Atualiza a posição do cursor
+void updatePos(int cursor[2], unsigned char selecionado, int tabuleiro[LINHAS][COLUNAS]){
+    int old[2] = {cursor[0], cursor[1]};
     if (IsKeyPressed(KEY_RIGHT))
         {
             if (cursor[0] < COLUNAS-1) cursor[0]++;
+            if (selecionado) swapCells(tabuleiro, old, cursor);
         }
     else if (IsKeyPressed(KEY_LEFT))
         {
             if (cursor[0] > 0) cursor[0]--;
+            if (selecionado) swapCells(tabuleiro, old, cursor);
         }
     if (IsKeyPressed(KEY_UP))
         {
             if (cursor[1] > 0) cursor[1]--;
+            if (selecionado) swapCells(tabuleiro, old, cursor);
         }
         else if (IsKeyPressed(KEY_DOWN))
         {
             if (cursor[1] < LINHAS-1) cursor[1]++;
+            if (selecionado) swapCells(tabuleiro, old, cursor);
         }
 }
 
@@ -57,7 +68,7 @@ void inicializarMatriz(int linhas, int colunas, int tabuleiro[linhas][colunas], 
     }
 }
 
-void imprimirMatriz(int matriz[LINHAS][COLUNAS]){
+/*void imprimirMatriz(int matriz[LINHAS][COLUNAS]){
     char texto[LINHAS];
     int j;
     BeginDrawing();
@@ -68,7 +79,7 @@ void imprimirMatriz(int matriz[LINHAS][COLUNAS]){
         DrawText(texto, 0, i*LADO, 20, WHITE);
     }
     EndDrawing();
-}
+}*/
 
 /*int checarMatches(int linhas, int colunas, int tabuleiro[linhas][colunas], int matches[linhas][colunas]){
     int quantMatches = 0;

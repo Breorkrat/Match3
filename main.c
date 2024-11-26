@@ -6,7 +6,6 @@
 int main(void)
 {
     // Inicializa uma posição aleatória para o cursor
-    int j = 12;
     SetRandomSeed(time(NULL));
     int cursor[2];
     cursor[0] = GetRandomValue(0, COLUNAS-1);
@@ -21,9 +20,9 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-        updatePos(cursor);
-        drawGrid(tabuleiro, cursor[0], cursor[1]);
-        //imprimirMatriz(tabuleiro);
+        if (IsKeyPressed(KEY_ENTER)) selecionado = !selecionado;
+        updatePos(cursor, selecionado, tabuleiro);
+        drawGrid(tabuleiro, cursor[0], cursor[1], selecionado);
     }
     CloseWindow();
     return 0;

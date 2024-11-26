@@ -6,6 +6,8 @@
 #define LARGURA COLUNAS*LADO
 #define ALTURA LINHAS*LADO
 
-#define NUMTIPOS 6
+#define NUMTIPOS 5
 const Color CORES[] = {RED, GREEN, BLUE, YELLOW, PURPLE, WHITE};
 const int QUANTCORES = (sizeof(CORES) / sizeof(Color));
+
+unsigned char selecionado = 0;
