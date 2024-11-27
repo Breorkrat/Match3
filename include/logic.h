@@ -4,7 +4,7 @@
 #include "consts.h"
 
 // Desenha a grade com o cursor na posição x y
-void drawGrid(int tabuleiro[LINHAS][COLUNAS], int x, int y, unsigned char selecionado)
+void drawGrid(int tabuleiro[LINHAS][COLUNAS], int x, int y, unsigned char selecionado, int matches[LINHAS][COLUNAS])
 {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -18,9 +18,13 @@ void drawGrid(int tabuleiro[LINHAS][COLUNAS], int x, int y, unsigned char seleci
                 Rectangle cursor = {coluna*LADO, linha*LADO, LADO, LADO};
                 DrawRectangleLinesEx(cursor, 3, (selecionado ? RED : YELLOW));
             }
-            int ind = tabuleiro[linha][coluna];
-            Color cor = CORES[ind];
-            DrawCircle(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO, cor);
+            if (matches[linha][coluna] == 1 || matches[linha][coluna] == 2) 
+            {
+                
+                DrawCircleLines(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO+3, matches[linha][coluna] == 1 ? WHITE : SKYBLUE);
+                DrawCircleLines(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO+4, matches[linha][coluna] == 1 ? WHITE : SKYBLUE);
+            }
+            DrawCircle(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO, CORES[tabuleiro[linha][coluna]]);
         }
     }
     EndDrawing();
@@ -68,20 +72,12 @@ void inicializarMatriz(int linhas, int colunas, int tabuleiro[linhas][colunas], 
     }
 }
 
-/*void imprimirMatriz(int matriz[LINHAS][COLUNAS]){
-    char texto[LINHAS];
-    int j;
-    BeginDrawing();
-    for (int i = 0; i < LINHAS-1; i++) {
-        for (j = 0; j < COLUNAS-1; j++) {
-            texto[j] = '0'+matriz[i][j];
-        }
-        DrawText(texto, 0, i*LADO, 20, WHITE);
-    }
-    EndDrawing();
-}*/
+// Atualiza a matriz matches de acordo:
+    // 1, caso haja um match na horizontal
+    // 2, caso haja um match na vertical
+void checarMatches(int linhas, int colunas, int tabuleiro[linhas][colunas], int matches[linhas][colunas]){
+    // Cópia temporária de DrawGrid
 
-/*int checarMatches(int linhas, int colunas, int tabuleiro[linhas][colunas], int matches[linhas][colunas]){
     int quantMatches = 0;
     // Limpa matriz matches
     for (int i = 0; i < linhas; i++) {
@@ -91,8 +87,8 @@ void inicializarMatriz(int linhas, int colunas, int tabuleiro[linhas][colunas], 
     }
 
     // Checagem na horizontal
-    for (int i = 1; i < linhas-1; i++) {
-        for (int j = 0; j < colunas; j++) {
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 1; j < colunas-1; j++) {
             if (tabuleiro[i][j] == tabuleiro[i][j-1] && tabuleiro[i][j] == tabuleiro[i][j+1]) {
                 matches[i][j] = 1;
                 quantMatches++;
@@ -101,14 +97,30 @@ void inicializarMatriz(int linhas, int colunas, int tabuleiro[linhas][colunas], 
     }
 
     // Checagem na vertical
-    for (int i = 1; i < linhas; i++) {
-        for (int j = 0; j < colunas-1; j++) {
+    for (int i = 1; i < linhas-1; i++) {
+        for (int j = 0; j < colunas; j++) {
             if (tabuleiro[i][j] == tabuleiro[i+1][j] && tabuleiro[i][j] == tabuleiro[i-1][j]) {
-                    matches[i][j] = 1;
+                    matches[i][j] = 2;
                     quantMatches ++;
             }
         }
     }
+    /*BeginDrawing();
+    ClearBackground(BLACK);
 
-    return quantMatches;
-}*/
+    for (int linha = 0; linha < LINHAS; linha++)
+    {
+        for (int coluna = 0; coluna < COLUNAS; coluna++)
+        {
+            if (matches[linha][coluna] == 1 || matches[linha][coluna] == 2) 
+            {
+                Rectangle cursor = {coluna*LADO, linha*LADO, LADO, LADO};
+                DrawRectangleLinesEx(cursor, 3, CORES[matches[linha][coluna]-1]);
+            }
+            int ind = tabuleiro[linha][coluna];
+            Color cor = CORES[ind];
+            DrawCircle(MARGEM+coluna*LADO, MARGEM+linha*LADO, RAIO, cor);
+        }
+    }
+    EndDrawing();*/
+}

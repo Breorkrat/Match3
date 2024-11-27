@@ -12,6 +12,7 @@ int main(void)
     cursor[1] = GetRandomValue(0, LINHAS-1);
 
     int tabuleiro[LINHAS][COLUNAS];
+    int matches[LINHAS][COLUNAS];
     inicializarMatriz(LINHAS, COLUNAS, tabuleiro, NUMTIPOS);
     //int matches[LINHAS][COLUNAS];
 
@@ -22,7 +23,8 @@ int main(void)
     {
         if (IsKeyPressed(KEY_ENTER)) selecionado = !selecionado;
         updatePos(cursor, selecionado, tabuleiro);
-        drawGrid(tabuleiro, cursor[0], cursor[1], selecionado);
+        checarMatches(LINHAS, COLUNAS, tabuleiro, matches);
+        drawGrid(tabuleiro, cursor[0], cursor[1], selecionado, matches);
     }
     CloseWindow();
     return 0;
