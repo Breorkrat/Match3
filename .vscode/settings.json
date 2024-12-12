@@ -10,6 +10,8 @@
 	},
 	"files.associations": {
 		"logic.h": "c",
-		"raylib.h": "c"
+		"raylib.h": "c",
+		"string.h": "c",
+		"consts.h": "c"
 	}
 }
