@@ -48,21 +48,26 @@ void updatePos(game* tabuleiro, char selecionado)
     int old[2] = {tabuleiro->cursor[0], tabuleiro->cursor[1]};
     if (IsKeyPressed(KEY_RIGHT))
     {
+        // Versão branchless comentada, acho que não é prático para manter no código mas fiz como um exercício
+        //tabuleiro->cursor[0] += (tabuleiro->cursor[0] < COLUNAS - 1);
         if (tabuleiro->cursor[0] < COLUNAS - 1) tabuleiro->cursor[0]++;
         if (selecionado) swapCells(tabuleiro, old);
     }
     else if (IsKeyPressed(KEY_LEFT))
     {
+        //tabuleiro->cursor[0] -= (tabuleiro->cursor[0] > 0);
         if (tabuleiro->cursor[0] > 0) tabuleiro->cursor[0]--;
         if (selecionado) swapCells(tabuleiro, old);
     }
     if (IsKeyPressed(KEY_UP))
     {
+        //tabuleiro->cursor[1] -= (tabuleiro->cursor[1] > 0);
         if (tabuleiro->cursor[1] > 0) tabuleiro->cursor[1]--;
         if (selecionado) swapCells(tabuleiro, old);
     }
     else if (IsKeyPressed(KEY_DOWN))
     {
+        //tabuleiro->cursor[1] += (tabuleiro->cursor[1] < LINHAS - 1);
         if (tabuleiro->cursor[1] < LINHAS - 1) tabuleiro->cursor[1]++;
         if (selecionado) swapCells(tabuleiro, old);
     }
@@ -80,9 +85,15 @@ void drawGrid(game tabuleiro, char selecionado)
         {
             if(tabuleiro.matches[linha][coluna] == 1) {
                 DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, BLUE);
+
+                DrawCircleLines(MARGEM + (coluna-1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
+                DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
+                DrawCircleLines(MARGEM + (coluna+1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
             }
             if (tabuleiro.matches[linha][coluna] == 2) {
                 DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, GREEN);
+
+                DrawCircleLines(MARGEM + coluna * LADO, MARGEM + (linha+1) * LADO, RAIO + 5, RED);
             } 
 
             // Desenha cursor
@@ -100,7 +111,8 @@ void drawGrid(game tabuleiro, char selecionado)
     EndDrawing();
 }
 
-void clearMatches(game* tabuleiro) {
+// Limpa a tabela de matches
+void clearMatchesTable(game* tabuleiro) {
     for (int i = 0; i < LINHAS; i++)
     {
         for (int j = 0; j < COLUNAS; j++)
@@ -112,7 +124,7 @@ void clearMatches(game* tabuleiro) {
 
 void checarMatches(game* tabuleiro)
 {
-    clearMatches(tabuleiro);
+    clearMatchesTable(tabuleiro);
 
     // Checagem na horizontal
     for (int i = 0; i < LINHAS; i++)
@@ -123,6 +135,9 @@ void checarMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[i][j] == tabuleiro->tabuleiro[i][j + 1])
             {
                 tabuleiro->matches[i][j] = 1;
+                tabuleiro->tabuleiro[i][j-1] = 0;
+                tabuleiro->tabuleiro[i][j] = 0;
+                tabuleiro->tabuleiro[i][j+1] = 0;
             }
         }
     }
@@ -136,6 +151,9 @@ void checarMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[i][j] == tabuleiro->tabuleiro[i - 1][j])
             {
                 tabuleiro->matches[i][j] = 2;
+                tabuleiro->tabuleiro[i-1][j] = 0;
+                tabuleiro->tabuleiro[i][j] = 0;
+                tabuleiro->tabuleiro[i+1][j] = 0;
             }
         }
     }

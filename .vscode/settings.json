@@ -12,6 +12,8 @@
 		"logic.h": "c",
 		"raylib.h": "c",
 		"string.h": "c",
-		"consts.h": "c"
+		"consts.h": "c",
+		"time.h": "c",
+		"stdio.h": "c"
 	}
 }

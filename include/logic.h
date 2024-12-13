@@ -6,4 +6,4 @@ void updatePos(game*, char);
 void swapCells(game*, int[2]);
 void drawGrid(game, char);
 void checarMatches(game*);
-void clearMatches(game*);
+void clearMatchesTable(game*);
