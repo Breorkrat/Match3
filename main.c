@@ -2,19 +2,18 @@
 #include <string.h>
 #include <time.h>
 #include "include/logic.h"
-
-int main(void) 
+     
+int main(void)     
 {
-    game tabuleiro;
-    inicializarMatriz(&tabuleiro);
-
+    game tabuleiro;   
+    inicializarMatriz(&tabuleiro);    
     // Inicializa uma posição aleatória para o cursor
     SetRandomSeed(time(NULL)); 
     tabuleiro.cursor[0] = GetRandomValue(0, COLUNAS-1);
     tabuleiro.cursor[1] = GetRandomValue(0, LINHAS-1);
 
     InitWindow(LARGURA, ALTURA, "Match3");
-    SetTargetFPS(60);
+    SetTargetFPS(15);
 
     while (!WindowShouldClose())
     {

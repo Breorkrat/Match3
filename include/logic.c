@@ -11,23 +11,23 @@
 #define ALTURA LINHAS*LADO
 #define NUMTIPOS 5
 
-const Color CORES[] = {BLACK, RED, GREEN, BLUE, YELLOW, PURPLE, WHITE};
+const Color CORES[] = {BLACK, RED, GREEN, BLUE, YELLOW, PURPLE, SKYBLUE, VIOLET};
 const int QUANTCORES = (sizeof(CORES) / sizeof(Color));
 char selecionado = 0;
 
 typedef struct game {
-    int tabuleiro[LINHAS][COLUNAS];
-    int matches[LINHAS][COLUNAS];
+    int tabuleiro[COLUNAS][LINHAS];
+    int matches[COLUNAS][LINHAS];
     int cursor[2];
 } game;
 
 void inicializarMatriz(game* tabuleiro)
 {
-    for (int i = 0; i < LINHAS; i++)
+    for (int x = 0; x < COLUNAS; x++)
     {
-        for (int j = 0; j < COLUNAS; j++)
+        for (int y = 0; y < LINHAS; y++)
         {
-            tabuleiro->tabuleiro[i][j] = GetRandomValue(1, NUMTIPOS);
+            tabuleiro->tabuleiro[x][y] = GetRandomValue(1, NUMTIPOS);
         }
     }
 }
@@ -35,10 +35,10 @@ void inicializarMatriz(game* tabuleiro)
 // Troca duas peças de posição
 void swapCells(game* tabuleiro, int final[2])
 {
-    int buffer = tabuleiro->tabuleiro[final[1]][final[0]];
+    int buffer = tabuleiro->tabuleiro[final[0]][final[1]];
 
-    tabuleiro->tabuleiro[final[1]][final[0]] = tabuleiro->tabuleiro[tabuleiro->cursor[1]][tabuleiro->cursor[0]];
-    tabuleiro->tabuleiro[tabuleiro->cursor[1]][tabuleiro->cursor[0]] = buffer;
+    tabuleiro->tabuleiro[final[0]][final[1]] = tabuleiro->tabuleiro[tabuleiro->cursor[0]][tabuleiro->cursor[1]];
+    tabuleiro->tabuleiro[tabuleiro->cursor[0]][tabuleiro->cursor[1]] = buffer;
     selecionado = 0;
 }
 
@@ -79,33 +79,33 @@ void drawGrid(game tabuleiro, char selecionado)
     BeginDrawing();
     ClearBackground(BLACK);
 
-    for (int linha = 0; linha < LINHAS; linha++)
+    for (int x = 0; x < COLUNAS; x++)
     {
-        for (int coluna = 0; coluna < COLUNAS; coluna++)
+        for (int y = 0; y < LINHAS; y++)
         {
-            if(tabuleiro.matches[linha][coluna] == 1) {
-                DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, BLUE);
+            if(tabuleiro.matches[x][y] == 1) {
+                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, BLUE);
 
-                DrawCircleLines(MARGEM + (coluna-1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
-                DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
-                DrawCircleLines(MARGEM + (coluna+1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
+                //DrawCircleLines(MARGEM + (coluna-1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
+                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
+                //DrawCircleLines(MARGEM + (coluna+1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
             }
-            if (tabuleiro.matches[linha][coluna] == 2) {
-                DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, GREEN);
+            if (tabuleiro.matches[x][y] == 2) {
+                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, GREEN);
 
-                DrawCircleLines(MARGEM + coluna * LADO, MARGEM + (linha+1) * LADO, RAIO + 5, RED);
+                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + (linha+1) * LADO, RAIO + 5, RED);
             } 
 
             // Desenha cursor
-            if (coluna == tabuleiro.cursor[0] && linha == tabuleiro.cursor[1])
+            if (x == tabuleiro.cursor[0] && y == tabuleiro.cursor[1])
             {
-                Rectangle cursor = {coluna * LADO, linha * LADO, LADO, LADO};
+                Rectangle cursor = {x * LADO, y * LADO, LADO, LADO};
                 DrawRectangleLinesEx(cursor, 3, (selecionado ? RED : YELLOW));
             }
             // Desenha peças
-            int tab = tabuleiro.tabuleiro[linha][coluna];
+            int tab = tabuleiro.tabuleiro[x][y];
             Color cor = CORES[tab];
-            DrawCircle(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO, cor);
+            DrawCircle(MARGEM + x * LADO, MARGEM + y * LADO, RAIO, cor);
         }
     }
     EndDrawing();
@@ -113,13 +113,24 @@ void drawGrid(game tabuleiro, char selecionado)
 
 // Limpa a tabela de matches
 void clearMatchesTable(game* tabuleiro) {
-    for (int i = 0; i < LINHAS; i++)
+    for (int x = 0; x < COLUNAS; x++)
     {
-        for (int j = 0; j < COLUNAS; j++)
+        for (int y = 0; y < LINHAS; y++)
         {
-            tabuleiro->matches[i][j] = 0;
+            tabuleiro->matches[x][y] = 0;
         }
     }
+}
+
+void bubbleClear(game* tabuleiro, int x, int y){
+    int i;
+    for (i = y; i > 0; i--){
+        tabuleiro->tabuleiro[x][i] = tabuleiro->tabuleiro[x][i-1];
+        tabuleiro->tabuleiro[x][i-1] = 0;
+        drawGrid(*tabuleiro, false);
+    }
+    tabuleiro->tabuleiro[x][i] = GetRandomValue(1, NUMTIPOS);
+
 }
 
 void checarMatches(game* tabuleiro)
@@ -127,33 +138,39 @@ void checarMatches(game* tabuleiro)
     clearMatchesTable(tabuleiro);
 
     // Checagem na horizontal
-    for (int i = 0; i < LINHAS; i++)
+    for (int x = 1; x < COLUNAS - 1; x++)
     {
-        for (int j = 1; j < COLUNAS - 1; j++)
+        for (int y = 0; y < LINHAS; y++)
         {
-            if (tabuleiro->tabuleiro[i][j] == tabuleiro->tabuleiro[i][j - 1] && 
-                tabuleiro->tabuleiro[i][j] == tabuleiro->tabuleiro[i][j + 1])
+            if (tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x-1][y] && 
+                tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x+1][y])
             {
-                tabuleiro->matches[i][j] = 1;
-                tabuleiro->tabuleiro[i][j-1] = 0;
-                tabuleiro->tabuleiro[i][j] = 0;
-                tabuleiro->tabuleiro[i][j+1] = 0;
+                //tabuleiro->matches[x][y] = 1;
+                tabuleiro->tabuleiro[x-1][y] = 0;
+                tabuleiro->tabuleiro[x][y] = 0;
+                tabuleiro->tabuleiro[x+1][y] = 0;
+                bubbleClear(tabuleiro, x-1, y);
+                bubbleClear(tabuleiro, x, y);
+                bubbleClear(tabuleiro, x+1, y);
             }
         }
     }
 
     // Checagem na vertical
-    for (int i = 1; i < LINHAS - 1; i++)
+    for (int x = 0; x < COLUNAS; x++)
     {
-        for (int j = 0; j < COLUNAS; j++)
+        for (int y = 1; y < LINHAS - 1; y++)
         {
-            if (tabuleiro->tabuleiro[i][j] == tabuleiro->tabuleiro[i + 1][j] && 
-                tabuleiro->tabuleiro[i][j] == tabuleiro->tabuleiro[i - 1][j])
+            if (tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x][y-1] && 
+                tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x][y+1])
             {
-                tabuleiro->matches[i][j] = 2;
-                tabuleiro->tabuleiro[i-1][j] = 0;
-                tabuleiro->tabuleiro[i][j] = 0;
-                tabuleiro->tabuleiro[i+1][j] = 0;
+                tabuleiro->matches[x][y] = 2;
+                tabuleiro->tabuleiro[x][y-1] = 0;
+                tabuleiro->tabuleiro[x][y] = 0;
+                tabuleiro->tabuleiro[x][y+1] = 0;
+                bubbleClear(tabuleiro, x, y-1);
+                bubbleClear(tabuleiro, x, y);
+                bubbleClear(tabuleiro, x, y+1);
             }
         }
     }
