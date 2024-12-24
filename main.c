@@ -11,12 +11,14 @@ int main(void)
     SetRandomSeed(time(NULL)); 
     tabuleiro.cursor[0] = GetRandomValue(0, COLUNAS-1);
     tabuleiro.cursor[1] = GetRandomValue(0, LINHAS-1);
-
     InitWindow(LARGURA, ALTURA, "Match3");
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
     {
+        /*BeginDrawing();
+        DrawTexture(textura, 0, 0, WHITE);
+        EndDrawing();*/
         if (IsKeyPressed(KEY_ENTER)) selecionado = !selecionado;
         updatePos(&tabuleiro, selecionado);
         checarMatches(&tabuleiro);

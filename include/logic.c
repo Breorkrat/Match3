@@ -18,9 +18,9 @@ char selecionado = 0;
 
 typedef struct game {
     int tabuleiro[COLUNAS][LINHAS];
-    int matches[COLUNAS][LINHAS];
     int cursor[2];
 } game;
+
 
 void inicializarMatriz(game* tabuleiro)
 {
@@ -84,19 +84,6 @@ void drawGrid(game tabuleiro, char selecionado)
     {
         for (int y = 0; y < LINHAS; y++)
         {
-            if(tabuleiro.matches[x][y] == 1) {
-                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, BLUE);
-
-                //DrawCircleLines(MARGEM + (coluna-1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
-                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
-                //DrawCircleLines(MARGEM + (coluna+1) * LADO, MARGEM + linha * LADO, RAIO + 5, RED);
-            }
-            if (tabuleiro.matches[x][y] == 2) {
-                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + linha * LADO, RAIO + 4, GREEN);
-
-                //DrawCircleLines(MARGEM + coluna * LADO, MARGEM + (linha+1) * LADO, RAIO + 5, RED);
-            } 
-
             // Desenha cursor
             if (x == tabuleiro.cursor[0] && y == tabuleiro.cursor[1])
             {
@@ -112,17 +99,6 @@ void drawGrid(game tabuleiro, char selecionado)
     EndDrawing();
 }
 
-// Limpa a tabela de matches
-void clearMatchesTable(game* tabuleiro) {
-    for (int x = 0; x < COLUNAS; x++)
-    {
-        for (int y = 0; y < LINHAS; y++)
-        {
-            tabuleiro->matches[x][y] = 0;
-        }
-    }
-}
-
 void bubbleClear(game* tabuleiro, int x, int y){
     drawGrid(*tabuleiro, false);
     usleep(200000); // Aguarda 0.2 segundos
@@ -136,7 +112,6 @@ void bubbleClear(game* tabuleiro, int x, int y){
 
 void checarMatches(game* tabuleiro)
 {
-    clearMatchesTable(tabuleiro);
     // Checagem na horizontal
     for (int x = 1; x < COLUNAS - 1; x++)
     {
