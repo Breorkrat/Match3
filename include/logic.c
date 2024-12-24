@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <time.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define LINHAS 8
 #define COLUNAS 10
@@ -123,20 +124,19 @@ void clearMatchesTable(game* tabuleiro) {
 }
 
 void bubbleClear(game* tabuleiro, int x, int y){
+    drawGrid(*tabuleiro, false);
+    usleep(200000); // Aguarda 0.2 segundos
     int i;
     for (i = y; i > 0; i--){
         tabuleiro->tabuleiro[x][i] = tabuleiro->tabuleiro[x][i-1];
         tabuleiro->tabuleiro[x][i-1] = 0;
-        drawGrid(*tabuleiro, false);
     }
     tabuleiro->tabuleiro[x][i] = GetRandomValue(1, NUMTIPOS);
-
 }
 
 void checarMatches(game* tabuleiro)
 {
     clearMatchesTable(tabuleiro);
-
     // Checagem na horizontal
     for (int x = 1; x < COLUNAS - 1; x++)
     {
@@ -145,13 +145,16 @@ void checarMatches(game* tabuleiro)
             if (tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x-1][y] && 
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x+1][y])
             {
-                //tabuleiro->matches[x][y] = 1;
-                tabuleiro->tabuleiro[x-1][y] = 0;
-                tabuleiro->tabuleiro[x][y] = 0;
-                tabuleiro->tabuleiro[x+1][y] = 0;
-                bubbleClear(tabuleiro, x-1, y);
-                bubbleClear(tabuleiro, x, y);
-                bubbleClear(tabuleiro, x+1, y);
+                int i, peça = tabuleiro->tabuleiro[x][y];
+                for(i = 1; tabuleiro->tabuleiro[x+i+1][y]/*checa próxima peça*/ == peça; i++); // Define i como índice da maior peça
+                while(tabuleiro->tabuleiro[x+i][y] == peça) {
+                    tabuleiro->tabuleiro[x+i][y] = 0;
+                    i--;
+                } // Seta todas as peças do match como 0
+                while(tabuleiro->tabuleiro[x+i+1][y] == 0) {
+                    bubbleClear(tabuleiro, x+i+1, y);
+                    i++;
+                } // Executa a função de atualizar em cada peça 0
             }
         }
     }
@@ -164,13 +167,16 @@ void checarMatches(game* tabuleiro)
             if (tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x][y-1] && 
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x][y+1])
             {
-                tabuleiro->matches[x][y] = 2;
-                tabuleiro->tabuleiro[x][y-1] = 0;
-                tabuleiro->tabuleiro[x][y] = 0;
-                tabuleiro->tabuleiro[x][y+1] = 0;
-                bubbleClear(tabuleiro, x, y-1);
-                bubbleClear(tabuleiro, x, y);
-                bubbleClear(tabuleiro, x, y+1);
+                int i, peça = tabuleiro->tabuleiro[x][y];
+                for(i = 1; tabuleiro->tabuleiro[x][y+i+1]/*checa próxima peça*/ == peça; i++); // Define i como índice da maior peça
+                while(tabuleiro->tabuleiro[x][y+i] == peça) {
+                    tabuleiro->tabuleiro[x][y+i] = 0;
+                    i--;
+                }
+                while(tabuleiro->tabuleiro[x][y+i+1] == 0) {
+                    bubbleClear(tabuleiro, x, y+i+1);
+                    i++;
+                }
             }
         }
     }

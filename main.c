@@ -1,11 +1,11 @@
 #include <raylib.h>
 #include <string.h>
-#include <time.h>
+#include <time.h> 
 #include "include/logic.h"
      
 int main(void)     
 {
-    game tabuleiro;   
+    game tabuleiro;         
     inicializarMatriz(&tabuleiro);    
     // Inicializa uma posição aleatória para o cursor
     SetRandomSeed(time(NULL)); 
@@ -13,7 +13,7 @@ int main(void)
     tabuleiro.cursor[1] = GetRandomValue(0, LINHAS-1);
 
     InitWindow(LARGURA, ALTURA, "Match3");
-    SetTargetFPS(15);
+    SetTargetFPS(60);
 
     while (!WindowShouldClose())
     {
