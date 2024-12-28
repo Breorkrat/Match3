@@ -21,7 +21,7 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-        if (timerMenu < 60) {
+        if (timerMenu < 210) {
             timerMenu++;
         } else {
             tela = JOGO;
@@ -31,7 +31,7 @@ int main(void)
             case LOGO:
                 BeginDrawing();
                 ClearBackground(RAYWHITE);
-                DrawText("MENU DO JOGUINHO :D", 30, 40, 50, RED);
+                DrawText("CRUSHEST\nCANDY", 30, 40, 50, RED);
                 EndDrawing();
                 break;
             
@@ -39,6 +39,8 @@ int main(void)
                 printf("Não fiz ainda :p\n");
 
             case JOGO:
+                if (IsKeyPressed(KEY_X)) tabuleiro.tabuleiro[tabuleiro.cursor[0]][tabuleiro.cursor[1]] --;
+                if (IsKeyPressed(KEY_Z)) tabuleiro.tabuleiro[tabuleiro.cursor[0]][tabuleiro.cursor[1]] ++;
                 if (IsKeyPressed(KEY_ENTER)) selecionado = !selecionado;
                 updatePos(&tabuleiro, selecionado);
                 updateMatches(&tabuleiro);

@@ -162,8 +162,9 @@ void draw(game tabuleiro, char selecionado){
     BeginDrawing();
     ClearBackground(BLACK);
 
-    drawHud(tabuleiro);
     drawGrid(tabuleiro, selecionado);
+    drawHud(tabuleiro);
+    
 
     EndDrawing();
 }
@@ -193,15 +194,15 @@ void updateMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x+1][y])
             {
                 int i, peça = tabuleiro->tabuleiro[x][y];
-                for(i = 1; tabuleiro->tabuleiro[x+i+1][y] == peça; i++); // Define i como índice da maior peça do match
+                for(i = 1; x+i+1 < LINHAS && tabuleiro->tabuleiro[x+i+1][y] == peça; i++); // Define i como índice da maior peça do match
                 int end = i;
-                while(tabuleiro->tabuleiro[x+i][y] == peça) i--; // Define i como índice da menor peça do match
+                while(x+i >= 0 && tabuleiro->tabuleiro[x+i][y] == peça) i--; // Define i como índice da menor peça do match
                 int min = i;
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
-                drawHud(*tabuleiro);
                 drawGrid(*tabuleiro, 0);
+                drawHud(*tabuleiro);
                 Rectangle cursor = {(x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
                 EndDrawing();
@@ -232,15 +233,15 @@ void updateMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x][y+1])
             {
                 int i, peça = tabuleiro->tabuleiro[x][y];
-                for(i = 1; tabuleiro->tabuleiro[x][y+i+1] == peça; i++); // Define i como índice da maior peça do match
+                for(i = 1; y+i+1 < COLUNAS && tabuleiro->tabuleiro[x][y+i+1] == peça; i++); // Define i como índice da maior peça do match
                 int end = i;
-                while(tabuleiro->tabuleiro[x][y+i] == peça) i--; // Define i como índice da menor peça do match
+                while(y+i >= 0 && tabuleiro->tabuleiro[x][y+i] == peça) i--; // Define i como índice da menor peça do match
                 int min = i;
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
-                drawHud(*tabuleiro);
                 drawGrid(*tabuleiro, 0);
+                drawHud(*tabuleiro);
                 Rectangle cursor = {x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
                 EndDrawing();
