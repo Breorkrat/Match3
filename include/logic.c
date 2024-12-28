@@ -200,6 +200,7 @@ void updateMatches(game* tabuleiro)
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
+                drawHud(*tabuleiro);
                 drawGrid(*tabuleiro, 0);
                 Rectangle cursor = {(x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
@@ -212,9 +213,6 @@ void updateMatches(game* tabuleiro)
                     tabuleiro->tabuleiro[x+tmp+1][y] = 0;
                     tmp++;
                 }
-                BeginDrawing();
-                drawGrid(*tabuleiro, 0);
-                EndDrawing();
 
                 // Depois as atualiza
                 while(i < end) {
@@ -241,6 +239,7 @@ void updateMatches(game* tabuleiro)
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
+                drawHud(*tabuleiro);
                 drawGrid(*tabuleiro, 0);
                 Rectangle cursor = {x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
