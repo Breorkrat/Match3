@@ -5,12 +5,11 @@
      
 int main(void)     
 {  
+    SetRandomSeed(time(NULL));
     game tabuleiro;
     tabuleiro.movimentos = 0;  
     tabuleiro.pontos = 0;      
-    inicializarMatriz(&tabuleiro);    
-    // Inicializa uma posição aleatória para o cursor
-    SetRandomSeed(time(NULL)); 
+    inicializarMatriz(&tabuleiro);     
     tabuleiro.cursor[0] = GetRandomValue(0, COLUNAS-1);
     tabuleiro.cursor[1] = GetRandomValue(0, LINHAS-1);
     InitWindow(LARGURA, ALTURA+ALTURA_HUD, "Match3");

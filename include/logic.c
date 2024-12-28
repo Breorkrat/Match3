@@ -14,9 +14,9 @@
 #define NUMTIPOS 6
 #define MAGNITUDE_PTO_DISPLAY 1
 
-const Color CIANO = {100, 255, 255, 255};
 const Color HUDCOLOR = {19, 19, 19, 255};
-const Color CORES[] = {BLACK, RED, GREEN, BLUE, YELLOW, PURPLE, CIANO, VIOLET};
+const Color CIANO = {100, 255, 255, 255};
+const Color CORES[] = {BLACK, RED, GREEN, BLUE, YELLOW, PURPLE, CIANO};
 const int QUANTCORES = (sizeof(CORES) / sizeof(Color));
 char selecionado = 0;
 
@@ -39,7 +39,7 @@ void inicializarMatriz(game* tabuleiro)
     }
 }
 
-// Troca duas peças de posição
+// Troca a peça na posição do cursor com uma peça na posição final posição
 void swapCells(game* tabuleiro, int final[2])
 {
     int buffer = tabuleiro->tabuleiro[final[0]][final[1]];
@@ -193,18 +193,35 @@ void updateMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x+1][y])
             {
                 int i, peça = tabuleiro->tabuleiro[x][y];
-                for(i = 1; tabuleiro->tabuleiro[x+i+1][y] == peça; i++); // Define i como índice da maior peça
-
-                while(tabuleiro->tabuleiro[x+i][y] == peça) {
-                    tabuleiro->tabuleiro[x+i][y] = 0;
-                    i--;
-                } // Seta todas as peças do match como 0
+                for(i = 1; tabuleiro->tabuleiro[x+i+1][y] == peça; i++); // Define i como índice da maior peça do match
+                int end = i;
+                while(tabuleiro->tabuleiro[x+i][y] == peça) i--; // Define i como índice da menor peça do match
                 int min = i;
-                while(tabuleiro->tabuleiro[x+i+1][y] == 0) {
+
+                // Desenha um retângulo verde indicando o match
+                BeginDrawing();
+                drawGrid(*tabuleiro, 0);
+                Rectangle cursor = {(x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
+                DrawRectangleLinesEx(cursor, 2, GREEN);
+                EndDrawing();
+                usleep(500000);
+
+                int tmp = i;
+                // Primeiro mostra todas as peças limpas
+                while(tmp < end) {
+                    tabuleiro->tabuleiro[x+tmp+1][y] = 0;
+                    tmp++;
+                }
+                BeginDrawing();
+                drawGrid(*tabuleiro, 0);
+                EndDrawing();
+
+                // Depois as atualiza
+                while(i < end) {
                     bubbleClear(tabuleiro, x+i+1, y);
                     i++;
-                } // Executa a função de atualizar em cada peça 0
-                tabuleiro->pontos += (i-min)*100*(i-min-2);
+                }
+                if (tabuleiro->movimentos > 0) tabuleiro->pontos += (i-min)*100*(i-min-2);
             }
         }
     }
@@ -217,17 +234,35 @@ void updateMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x][y+1])
             {
                 int i, peça = tabuleiro->tabuleiro[x][y];
-                for(i = 1; tabuleiro->tabuleiro[x][y+i+1]/*checa próxima peça*/ == peça; i++); // Define i como índice da maior peça
-                while(tabuleiro->tabuleiro[x][y+i] == peça) {
-                    tabuleiro->tabuleiro[x][y+i] = 0;
-                    i--;
-                }
+                for(i = 1; tabuleiro->tabuleiro[x][y+i+1] == peça; i++); // Define i como índice da maior peça do match
+                int end = i;
+                while(tabuleiro->tabuleiro[x][y+i] == peça) i--; // Define i como índice da menor peça do match
                 int min = i;
-                while(tabuleiro->tabuleiro[x][y+i+1] == 0) {
+
+                // Desenha um retângulo verde indicando o match
+                BeginDrawing();
+                drawGrid(*tabuleiro, 0);
+                Rectangle cursor = {x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
+                DrawRectangleLinesEx(cursor, 2, GREEN);
+                EndDrawing();
+                usleep(500000);
+
+                int tmp = i;
+                // Primeiro mostra todas as peças limpas
+                while(tmp < end) {
+                    tabuleiro->tabuleiro[x][y+tmp+1] = 0;
+                    tmp++;
+                }
+                BeginDrawing();
+                drawGrid(*tabuleiro, 0);
+                EndDrawing();
+
+                // Depois as atualiza
+                while(i < end) {
                     bubbleClear(tabuleiro, x, y+i+1);
                     i++;
                 }
-                tabuleiro->pontos += (i-min)*100*(i-min-2);
+                if (tabuleiro->movimentos > 0) tabuleiro->pontos += (i-min)*100*(i-min-2);
             }
         }
     }
