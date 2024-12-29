@@ -32,8 +32,9 @@ typedef struct game {
     int selecao[2];                 // Posição da célula celecionada em células
     int movimentos;                 // Contador de movimentos
     int pontos;                     // Contador de pontos
-    int pecas[NUMTIPOS+1];          // Contador de quantas peças de tipo I foram limpas
-}
+    int pecas[NUMTIPOS+1];            // Contador de quantas peças de tipo I foram limpas
+} game;
+
 
 void inicializarJogo(game* tabuleiro)
 {
