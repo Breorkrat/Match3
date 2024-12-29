@@ -17,12 +17,13 @@
 #define NUMTIPOS 6
 #define MAGNITUDE_PTO_DISPLAY 21
 
-
+char modo_edicao = 0;
 const Color HUDCOLOR = {10, 10, 10, 180};
 const Color CIANO = {100, 255, 255, 255};
 const Color CORES[] = {BLACK, RED, GREEN, BLUE, YELLOW, PURPLE, CIANO};
 const int QUANTCORES = (sizeof(CORES) / sizeof(Color));
 Texture2D background;
+typedef enum Telas { LOGO = 0, MENU, JOGO, NIVEIS, PAUSE } Telas;
 
 typedef struct game {
     int tabuleiro[COLUNAS][LINHAS]; // Valores das peças
@@ -31,8 +32,7 @@ typedef struct game {
     int selecao[2];                 // Posição da célula celecionada em células
     int movimentos;                 // Contador de movimentos
     int pontos;                     // Contador de pontos
-    int pecas[NUMTIPOS+1];            // Contador de quantas peças de tipo I foram limpas
-} game;
+    int pecas[NUMTIPOS+1];          // Contador de quantas peças de tipo I foram limpas
 
 
 void inicializarJogo(game* tabuleiro)
@@ -49,6 +49,8 @@ void inicializarJogo(game* tabuleiro)
     tabuleiro->pontos = 0;
     tabuleiro->selecionado = 0;
     for (int i = 0; i < NUMTIPOS; i++) tabuleiro->pecas[i] = 0;
+    tabuleiro->cursor[0] = 0;
+    tabuleiro->cursor[1] = 1;
 }
 
 // Troca a peça na posição do cursor com uma peça na posição final posição
@@ -165,6 +167,11 @@ void draw(game* tabuleiro){
     DrawTexture(background, 0, 0, WHITE);
     drawGrid(tabuleiro);
     drawHud(*tabuleiro);
+    if(modo_edicao) {
+        DrawRectangleLinesEx((Rectangle){(MARGEM_JANELA_LARGURA/2), ALTURA_HUD, COLUNAS*LADO, LINHAS*LADO}, 3, YELLOW);
+        DrawText("Modo de Edição\nAperte F1 para sair", 5, ALTURA_HUD + 15, 15, WHITE);
+        DrawText("Z e X para\ntrocar as\npeças\n\nF2 para salvar\no nível", MARGEM_JANELA_LARGURA/2 + COLUNAS*LADO + 30, ALTURA_HUD + 15, 15, WHITE);
+     }
     
     EndDrawing();
 }
@@ -218,7 +225,7 @@ void updateMatches(game* tabuleiro)
 
                 // Depois as atualiza
                 while(i < end) {
-                    tabuleiro->pecas[peça]++;
+                    if (tabuleiro->movimentos > 0) tabuleiro->pecas[peça]++;
                     bubbleClear(tabuleiro, x+i+1, y);
                     i++;
                 }
@@ -263,7 +270,7 @@ void updateMatches(game* tabuleiro)
 
                 // Depois as atualiza
                 while(i < end) {
-                    tabuleiro->pecas[peça]++;
+                    if (tabuleiro->movimentos > 0) tabuleiro->pecas[peça]++;
                     bubbleClear(tabuleiro, x, y+i+1);
                     i++;
                 }
