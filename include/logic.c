@@ -14,6 +14,8 @@
 #define ALTURA_HUD 85
 #define NUMTIPOS 6
 #define MAGNITUDE_PTO_DISPLAY 1
+#define MARGEM_JANELA_LARGURA 80
+#define MARGEM_JANELA_ALTURA 20
 
 const Color HUDCOLOR = {19, 19, 19, 255};
 const Color CIANO = {100, 255, 255, 255};
@@ -81,7 +83,7 @@ int matchesValidos(game tabuleiro){
 }
 
 void drawHud(game tabuleiro){
-    DrawRectangle(0, 0, LARGURA, ALTURA_HUD, HUDCOLOR);
+    DrawRectangle(0, 0, LARGURA+MARGEM_JANELA_LARGURA, ALTURA_HUD, HUDCOLOR);
     DrawText("Movimentos: ", 5, 9, 30, GREEN);
     char temp[MAGNITUDE_PTO_DISPLAY];
     sprintf(temp, "%d", tabuleiro.movimentos);
@@ -123,9 +125,9 @@ void drawGrid(game* tabuleiro)
         {
             // Desenha peças
             Color cor = CORES[tabuleiro->tabuleiro[x][y]];
-            DrawCircle(MARGEM + x * LADO, MARGEM + y * LADO + ALTURA_HUD, RAIO, cor);
+            DrawCircle((MARGEM_JANELA_LARGURA / 2) + MARGEM + x * LADO, MARGEM + y * LADO + ALTURA_HUD, RAIO, cor);
 
-            Rectangle pecaPos = {x * LADO, y * LADO + ALTURA_HUD, LADO, LADO};
+            Rectangle pecaPos = {(MARGEM_JANELA_LARGURA / 2) + x * LADO,  y * LADO + ALTURA_HUD, LADO, LADO};
             if (tabuleiro->cursor[0] == x && tabuleiro->cursor[1] == y) {
                 DrawRectangleLinesEx(pecaPos, 3, YELLOW);
                 if (changeSelect && tabuleiro->selecionado) {
@@ -136,7 +138,7 @@ void drawGrid(game* tabuleiro)
         }
     }
     if(tabuleiro->selecionado) {
-        Rectangle sel = {tabuleiro->selecao[0]*LADO+2, tabuleiro->selecao[1]*LADO+2 + ALTURA_HUD, LADO-4, LADO-4};
+        Rectangle sel = {(MARGEM_JANELA_LARGURA/2) + tabuleiro->selecao[0]*LADO+2, tabuleiro->selecao[1]*LADO+2 + ALTURA_HUD, LADO-4, LADO-4};
         DrawRectangleLinesEx(sel, 2, RED);
     }
 }
@@ -148,7 +150,6 @@ void draw(game* tabuleiro){
     drawGrid(tabuleiro);
     drawHud(*tabuleiro);
     
-
     EndDrawing();
 }
 
@@ -186,7 +187,7 @@ void updateMatches(game* tabuleiro)
                 BeginDrawing();
                 drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
-                Rectangle cursor = {(x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
+                Rectangle cursor = {(MARGEM_JANELA_LARGURA/2) + (x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
                 EndDrawing();
                 usleep(500000);
@@ -225,7 +226,7 @@ void updateMatches(game* tabuleiro)
                 BeginDrawing();
                 drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
-                Rectangle cursor = {x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
+                Rectangle cursor = {(MARGEM_JANELA_LARGURA/2) + x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
                 EndDrawing();
                 usleep(500000);

@@ -14,9 +14,10 @@ int main(void)
     tabuleiro.selecionado = 0;
     inicializarMatriz(&tabuleiro);
     Telas tela = LOGO;
-    InitWindow(LARGURA, ALTURA+ALTURA_HUD, "Match3");
+    InitWindow(LARGURA+MARGEM_JANELA_LARGURA, ALTURA+ALTURA_HUD+MARGEM_JANELA_ALTURA, "Match3");
     SetTargetFPS(60);
     int timerMenu = 0;
+    Texture2D background = LoadTexture("./images/background.png");
 
     while (!WindowShouldClose())
     {
@@ -24,7 +25,7 @@ int main(void)
             timerMenu++;
         } else {
             ClearBackground(BLACK);
-            tela = JOGO;
+            tela = MENU;
         }
         switch (tela) {
             case LOGO:
@@ -37,18 +38,24 @@ int main(void)
             case MENU:
                 BeginDrawing();
                 ClearBackground(BLACK);
+                DrawTexture(background, 0, 0, WHITE);
+                //DrawText("Match 3");
                 EndDrawing();
                 break;
 
             case JOGO:
-                tabuleiro.cursor[0] = GetMouseX()/LADO;
+                tabuleiro.cursor[0] = (GetMouseX()-(MARGEM_JANELA_LARGURA/2))/LADO;
                 tabuleiro.cursor[1] = (GetMouseY()-ALTURA_HUD)/LADO;
+                if(IsKeyPressed(KEY_Z)) tabuleiro.tabuleiro[tabuleiro.cursor[0]][tabuleiro.cursor[1]]--;
+                if(IsKeyPressed(KEY_X)) tabuleiro.tabuleiro[tabuleiro.cursor[0]][tabuleiro.cursor[1]]++;
                 updateMatches(&tabuleiro);
                 draw(&tabuleiro);
                 break;
         }
-        
     }
     CloseWindow();
+
+
+
     return 0;
 }
