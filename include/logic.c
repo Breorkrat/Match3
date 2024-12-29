@@ -33,7 +33,7 @@ typedef struct game {
     int movimentos;                 // Contador de movimentos
     int pontos;                     // Contador de pontos
     int pecas[NUMTIPOS+1];          // Contador de quantas peças de tipo I foram limpas
-
+}
 
 void inicializarJogo(game* tabuleiro)
 {
