@@ -9,18 +9,20 @@
 #define RAIO 20
 #define LADO (2*RAIO+10)
 #define MARGEM LADO/2
-#define LARGURA COLUNAS*LADO
-#define ALTURA LINHAS*LADO
-#define ALTURA_HUD 85
-#define NUMTIPOS 6
-#define MAGNITUDE_PTO_DISPLAY 1
-#define MARGEM_JANELA_LARGURA 80
+#define MARGEM_JANELA_LARGURA 300
 #define MARGEM_JANELA_ALTURA 20
+#define ALTURA_HUD 85
+#define LARGURA COLUNAS*LADO + MARGEM_JANELA_LARGURA
+#define ALTURA LINHAS*LADO + MARGEM_JANELA_ALTURA+ALTURA_HUD
+#define NUMTIPOS 6
+#define MAGNITUDE_PTO_DISPLAY 21
 
-const Color HUDCOLOR = {19, 19, 19, 255};
+
+const Color HUDCOLOR = {10, 10, 10, 180};
 const Color CIANO = {100, 255, 255, 255};
 const Color CORES[] = {BLACK, RED, GREEN, BLUE, YELLOW, PURPLE, CIANO};
 const int QUANTCORES = (sizeof(CORES) / sizeof(Color));
+Texture2D background;
 
 typedef struct game {
     int tabuleiro[COLUNAS][LINHAS]; // Valores das peças
@@ -29,11 +31,13 @@ typedef struct game {
     int selecao[2];                 // Posição da célula celecionada em células
     int movimentos;                 // Contador de movimentos
     int pontos;                     // Contador de pontos
+    int pecas[NUMTIPOS+1];            // Contador de quantas peças de tipo I foram limpas
 } game;
 
 
-void inicializarMatriz(game* tabuleiro)
+void inicializarJogo(game* tabuleiro)
 {
+    // Cria as peças
     for (int x = 0; x < COLUNAS; x++)
     {
         for (int y = 0; y < LINHAS; y++)
@@ -41,6 +45,10 @@ void inicializarMatriz(game* tabuleiro)
             tabuleiro->tabuleiro[x][y] = GetRandomValue(1, NUMTIPOS);
         }
     }
+    tabuleiro->movimentos = 0;
+    tabuleiro->pontos = 0;
+    tabuleiro->selecionado = 0;
+    for (int i = 0; i < NUMTIPOS; i++) tabuleiro->pecas[i] = 0;
 }
 
 // Troca a peça na posição do cursor com uma peça na posição final posição
@@ -82,18 +90,6 @@ int matchesValidos(game tabuleiro){
     return 0;
 }
 
-void drawHud(game tabuleiro){
-    DrawRectangle(0, 0, LARGURA+MARGEM_JANELA_LARGURA, ALTURA_HUD, HUDCOLOR);
-    DrawText("Movimentos: ", 5, 9, 30, GREEN);
-    char temp[MAGNITUDE_PTO_DISPLAY];
-    sprintf(temp, "%d", tabuleiro.movimentos);
-    DrawText(temp, 190, 10, 30, GREEN);
-
-    DrawText("Pontuação: ", 5, 49, 30, GREEN);
-    sprintf(temp, "%d", tabuleiro.pontos);
-    DrawText(temp, 180, 50, 30, GREEN);
-}
-
 int testSwap(game* tabuleiro){
     tabuleiro->selecionado = 0;
     // Se a diferença da posição das peças for maior que 1, retorna
@@ -110,9 +106,29 @@ int testSwap(game* tabuleiro){
     }
     else return 0;
 }
+
+void drawHud(game tabuleiro){
+    DrawRectangle(0, 0, LARGURA, ALTURA_HUD, HUDCOLOR);
+    DrawText("Movimentos: ", 5, 9, 20, GREEN);
+    char temp[MAGNITUDE_PTO_DISPLAY];
+    sprintf(temp, "%d", tabuleiro.movimentos);
+    DrawText(temp, 130, 10, 20, GREEN);
+
+    DrawText("Pontuação: ", 5, 49, 20, GREEN);
+    sprintf(temp, "%d", tabuleiro.pontos);
+    DrawText(temp, 130, 50, 20, GREEN);
+
+    for(int i = 1; i <= NUMTIPOS; i++){
+        sprintf(temp, "%d", tabuleiro.pecas[i]);
+        DrawText(temp, 125+i*LADO*1.9, 28, 20, WHITE);
+        DrawCircle(170+i*LADO*1.9, 35, RAIO, CORES[i]);
+    }
+}
+
 // Desenha a grade com o cursor na posição x y
 void drawGrid(game* tabuleiro)
 {
+    DrawRectangle(0, 0, LARGURA, ALTURA, (Color){0, 0, 0, 210});
     char changeSelect = 0;
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         if (tabuleiro->selecionado) testSwap(tabuleiro);
@@ -146,7 +162,7 @@ void drawGrid(game* tabuleiro)
 void draw(game* tabuleiro){
     BeginDrawing();
     ClearBackground(BLACK);
-
+    DrawTexture(background, 0, 0, WHITE);
     drawGrid(tabuleiro);
     drawHud(*tabuleiro);
     
@@ -178,13 +194,14 @@ void updateMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x+1][y])
             {
                 int i, peça = tabuleiro->tabuleiro[x][y];
-                for(i = 1; x+i+1 < LINHAS && tabuleiro->tabuleiro[x+i+1][y] == peça; i++); // Define i como índice da maior peça do match
+                for(i = 1; x+i+1 < COLUNAS && tabuleiro->tabuleiro[x+i+1][y] == peça; i++); // Define i como índice da maior peça do match
                 int end = i;
                 while(x+i >= 0 && tabuleiro->tabuleiro[x+i][y] == peça) i--; // Define i como índice da menor peça do match
                 int min = i;
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
+                DrawTexture(background, 0, 0, WHITE);
                 drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
                 Rectangle cursor = {(MARGEM_JANELA_LARGURA/2) + (x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
@@ -201,6 +218,7 @@ void updateMatches(game* tabuleiro)
 
                 // Depois as atualiza
                 while(i < end) {
+                    tabuleiro->pecas[peça]++;
                     bubbleClear(tabuleiro, x+i+1, y);
                     i++;
                 }
@@ -217,13 +235,14 @@ void updateMatches(game* tabuleiro)
                 tabuleiro->tabuleiro[x][y] == tabuleiro->tabuleiro[x][y+1])
             {
                 int i, peça = tabuleiro->tabuleiro[x][y];
-                for(i = 1; y+i+1 < COLUNAS && tabuleiro->tabuleiro[x][y+i+1] == peça; i++); // Define i como índice da maior peça do match
+                for(i = 1; y+i+1 < LINHAS && tabuleiro->tabuleiro[x][y+i+1] == peça; i++); // Define i como índice da maior peça do match
                 int end = i;
                 while(y+i >= 0 && tabuleiro->tabuleiro[x][y+i] == peça) i--; // Define i como índice da menor peça do match
                 int min = i;
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
+                DrawTexture(background, 0, 0, WHITE);
                 drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
                 Rectangle cursor = {(MARGEM_JANELA_LARGURA/2) + x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
@@ -237,12 +256,14 @@ void updateMatches(game* tabuleiro)
                     tabuleiro->tabuleiro[x][y+tmp+1] = 0;
                     tmp++;
                 }
-                BeginDrawing();
+                BeginDrawing();          
+                DrawTexture(background, 0, 0, WHITE);
                 drawGrid(tabuleiro);
                 EndDrawing();
 
                 // Depois as atualiza
                 while(i < end) {
+                    tabuleiro->pecas[peça]++;
                     bubbleClear(tabuleiro, x, y+i+1);
                     i++;
                 }
