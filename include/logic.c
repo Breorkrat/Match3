@@ -2,6 +2,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #define LINHAS 8
 #define COLUNAS 10
@@ -18,13 +19,14 @@ const Color HUDCOLOR = {19, 19, 19, 255};
 const Color CIANO = {100, 255, 255, 255};
 const Color CORES[] = {BLACK, RED, GREEN, BLUE, YELLOW, PURPLE, CIANO};
 const int QUANTCORES = (sizeof(CORES) / sizeof(Color));
-char selecionado = 0;
 
 typedef struct game {
-    int tabuleiro[COLUNAS][LINHAS];
-    int cursor[2];
-    int movimentos;
-    int pontos;
+    int tabuleiro[COLUNAS][LINHAS]; // Valores das peças
+    int cursor[2];              // Posição do cursor em células
+    char selecionado;               // Cursor está selecionando? 1 ou 0
+    int selecao[2];                 // Posição da célula celecionada em células
+    int movimentos;                 // Contador de movimentos
+    int pontos;                     // Contador de pontos
 } game;
 
 
@@ -40,13 +42,13 @@ void inicializarMatriz(game* tabuleiro)
 }
 
 // Troca a peça na posição do cursor com uma peça na posição final posição
-void swapCells(game* tabuleiro, int final[2])
+void swapCells(game* tabuleiro)
 {
-    int buffer = tabuleiro->tabuleiro[final[0]][final[1]];
+    int buffer = tabuleiro->tabuleiro[tabuleiro->cursor[0]][tabuleiro->cursor[1]];
 
-    tabuleiro->tabuleiro[final[0]][final[1]] = tabuleiro->tabuleiro[tabuleiro->cursor[0]][tabuleiro->cursor[1]];
-    tabuleiro->tabuleiro[tabuleiro->cursor[0]][tabuleiro->cursor[1]] = buffer;
-    selecionado = 0;
+    tabuleiro->tabuleiro[tabuleiro->cursor[0]][tabuleiro->cursor[1]] = tabuleiro->tabuleiro[tabuleiro->selecao[0]][tabuleiro->selecao[1]];
+    tabuleiro->tabuleiro[tabuleiro->selecao[0]][tabuleiro->selecao[1]] = buffer;
+    tabuleiro->selecionado = 0;
 }
 
 // Retorna 1 se houverem matches no tabuleiro fornecido, caso contrário, retorna 0
@@ -80,21 +82,22 @@ int matchesValidos(game tabuleiro){
 
 // Verifica se um dado movimento pode ser executado, recebendo um tabuleiro, as coordenadas para onde a peça
 // deve ser movida e se o cursor está em modo de movimento. Caso validado, o movimento é executado
-int testSwap(game* tabuleiro, int final[2], char selecionado){
+/*int testSwap(game* tabuleiro, int final[2], char selecionado){
     if(!selecionado) return 0;
     // Passa uma cópia do tabuleiro para swapCells para criar o caso do movimento ser executado
     game tempTab = *tabuleiro;
-    swapCells(&tempTab, final);
+    //swapCells(&tempTab, final);
     if(matchesValidos(tempTab)) {
-        swapCells(tabuleiro, final);
+        //swapCells(tabuleiro, final);
         tabuleiro->movimentos ++;
         return 1;
     }
     else return 0;
-}
+}*/
+
 
 // Atualiza a posição do cursor
-void updatePos(game* tabuleiro, char selecionado)
+/*void updatePos(game* tabuleiro, char selecionado)
 {
     int old[2] = {tabuleiro->cursor[0], tabuleiro->cursor[1]};
     if (IsKeyPressed(KEY_RIGHT))
@@ -123,7 +126,7 @@ void updatePos(game* tabuleiro, char selecionado)
         testSwap(tabuleiro, old, selecionado);
     }
    
-}
+}*/
 
 void drawHud(game tabuleiro){
     DrawRectangle(0, 0, LARGURA, ALTURA_HUD, HUDCOLOR);
@@ -137,33 +140,68 @@ void drawHud(game tabuleiro){
     DrawText(temp, 180, 50, 30, GREEN);
 }
 
+int testSwap(game* tabuleiro){
+    tabuleiro->selecionado = 0;
+    // Se a diferença da posição das peças for maior que 1, retorna
+    if (abs(tabuleiro->selecao[0] - tabuleiro->cursor[0]) +
+        abs(tabuleiro->selecao[1] - tabuleiro->cursor[1]) > 1) return 0;
+        
+    // Passa uma cópia do tabuleiro para swapCells para criar o caso do movimento ser executado
+    game tempTab = *tabuleiro;
+    swapCells(&tempTab);
+    if(matchesValidos(tempTab)) {
+        swapCells(tabuleiro);
+        tabuleiro->movimentos++;
+        return 1;
+    }
+    else return 0;
+}
 // Desenha a grade com o cursor na posição x y
-void drawGrid(game tabuleiro, char selecionado)
+void drawGrid(game* tabuleiro)
 {
+    char changeSelect = 0;
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (tabuleiro->selecionado) testSwap(tabuleiro);
+        else tabuleiro->selecionado = 1;
+        changeSelect = 1;
+    }
     for (int x = 0; x < COLUNAS; x++)
     {
         for (int y = 0; y < LINHAS; y++)
         {
-            // Desenha cursor
-            if (x == tabuleiro.cursor[0] && y == tabuleiro.cursor[1])
+            // Desenha cursor com teclado
+            /*if (x == tabuleiro.cursor[0] && y == tabuleiro.cursor[1])
             {
                 Rectangle cursor = {x * LADO, y * LADO + ALTURA_HUD, LADO, LADO};
                 DrawRectangleLinesEx(cursor, 3, (selecionado ? RED : YELLOW));
-            }
+            }*/
+            
             // Desenha peças
-            int tab = tabuleiro.tabuleiro[x][y];
-            Color cor = CORES[tab];
+            Color cor = CORES[tabuleiro->tabuleiro[x][y]];
             DrawCircle(MARGEM + x * LADO, MARGEM + y * LADO + ALTURA_HUD, RAIO, cor);
+
+            Rectangle pecaPos = {x * LADO, y * LADO + ALTURA_HUD, LADO, LADO};
+            if (tabuleiro->cursor[0] == x && tabuleiro->cursor[1] == y) {
+                DrawRectangleLinesEx(pecaPos, 3, YELLOW);
+                if (changeSelect && tabuleiro->selecionado) {
+                     tabuleiro->selecao[0] = x;
+                     tabuleiro->selecao[1] = y;
+                }
+            }
         }
+    }
+    if(tabuleiro->selecionado) {
+        Rectangle sel = {tabuleiro->selecao[0]*LADO+2, tabuleiro->selecao[1]*LADO+2 + ALTURA_HUD, LADO-4, LADO-4};
+        DrawRectangleLinesEx(sel, 2, RED);
     }
 }
 
-void draw(game tabuleiro, char selecionado){
+void draw(game* tabuleiro){
     BeginDrawing();
     ClearBackground(BLACK);
 
-    drawGrid(tabuleiro, selecionado);
-    drawHud(tabuleiro);
+    drawGrid(tabuleiro);
+    drawHud(*tabuleiro);
     
 
     EndDrawing();
@@ -172,7 +210,7 @@ void draw(game tabuleiro, char selecionado){
 // Recebe tabuleiro e a posição de uma peça que deverá ser deletada, então, passa ela para o topo
 // da pilha e gera uma nova em seu lugar
 void bubbleClear(game* tabuleiro, int x, int y){
-    draw(*tabuleiro, false);
+    draw(tabuleiro);
     usleep(100000); // Aguarda 0.1 segundo para melhor visualização do movimento
     int i;
     for (i = y; i > 0; i--){
@@ -201,7 +239,7 @@ void updateMatches(game* tabuleiro)
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
-                drawGrid(*tabuleiro, 0);
+                drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
                 Rectangle cursor = {(x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
@@ -240,7 +278,7 @@ void updateMatches(game* tabuleiro)
 
                 // Desenha um retângulo verde indicando o match
                 BeginDrawing();
-                drawGrid(*tabuleiro, 0);
+                drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
                 Rectangle cursor = {x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
@@ -254,7 +292,7 @@ void updateMatches(game* tabuleiro)
                     tmp++;
                 }
                 BeginDrawing();
-                drawGrid(*tabuleiro, 0);
+                drawGrid(tabuleiro);
                 EndDrawing();
 
                 // Depois as atualiza
