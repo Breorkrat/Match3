@@ -22,7 +22,7 @@ const int QUANTCORES = (sizeof(CORES) / sizeof(Color));
 
 typedef struct game {
     int tabuleiro[COLUNAS][LINHAS]; // Valores das peças
-    int cursor[2];              // Posição do cursor em células
+    int cursor[2];                  // Posição do cursor em células
     char selecionado;               // Cursor está selecionando? 1 ou 0
     int selecao[2];                 // Posição da célula celecionada em células
     int movimentos;                 // Contador de movimentos
@@ -80,54 +80,6 @@ int matchesValidos(game tabuleiro){
     return 0;
 }
 
-// Verifica se um dado movimento pode ser executado, recebendo um tabuleiro, as coordenadas para onde a peça
-// deve ser movida e se o cursor está em modo de movimento. Caso validado, o movimento é executado
-/*int testSwap(game* tabuleiro, int final[2], char selecionado){
-    if(!selecionado) return 0;
-    // Passa uma cópia do tabuleiro para swapCells para criar o caso do movimento ser executado
-    game tempTab = *tabuleiro;
-    //swapCells(&tempTab, final);
-    if(matchesValidos(tempTab)) {
-        //swapCells(tabuleiro, final);
-        tabuleiro->movimentos ++;
-        return 1;
-    }
-    else return 0;
-}*/
-
-
-// Atualiza a posição do cursor
-/*void updatePos(game* tabuleiro, char selecionado)
-{
-    int old[2] = {tabuleiro->cursor[0], tabuleiro->cursor[1]};
-    if (IsKeyPressed(KEY_RIGHT))
-    {
-        // Versão branchless que não usa if statements, versão com IF comentada
-        tabuleiro->cursor[0] += (tabuleiro->cursor[0] < COLUNAS - 1);
-        //if (tabuleiro->cursor[0] < COLUNAS - 1) tabuleiro->cursor[0]++;
-        testSwap(tabuleiro, old, selecionado);
-    }
-    else if (IsKeyPressed(KEY_LEFT))
-    {
-        tabuleiro->cursor[0] -= (tabuleiro->cursor[0] > 0);
-        //if (tabuleiro->cursor[0] > 0) tabuleiro->cursor[0]--;
-        testSwap(tabuleiro, old, selecionado);
-    }
-    if (IsKeyPressed(KEY_UP))
-    {
-        tabuleiro->cursor[1] -= (tabuleiro->cursor[1] > 0);
-        //if (tabuleiro->cursor[1] > 0) tabuleiro->cursor[1]--;
-        testSwap(tabuleiro, old, selecionado);
-    }
-    else if (IsKeyPressed(KEY_DOWN))
-    {
-        tabuleiro->cursor[1] += (tabuleiro->cursor[1] < LINHAS - 1);
-        //if (tabuleiro->cursor[1] < LINHAS - 1) tabuleiro->cursor[1]++;
-        testSwap(tabuleiro, old, selecionado);
-    }
-   
-}*/
-
 void drawHud(game tabuleiro){
     DrawRectangle(0, 0, LARGURA, ALTURA_HUD, HUDCOLOR);
     DrawText("Movimentos: ", 5, 9, 30, GREEN);
@@ -145,7 +97,7 @@ int testSwap(game* tabuleiro){
     // Se a diferença da posição das peças for maior que 1, retorna
     if (abs(tabuleiro->selecao[0] - tabuleiro->cursor[0]) +
         abs(tabuleiro->selecao[1] - tabuleiro->cursor[1]) > 1) return 0;
-        
+
     // Passa uma cópia do tabuleiro para swapCells para criar o caso do movimento ser executado
     game tempTab = *tabuleiro;
     swapCells(&tempTab);
@@ -169,13 +121,6 @@ void drawGrid(game* tabuleiro)
     {
         for (int y = 0; y < LINHAS; y++)
         {
-            // Desenha cursor com teclado
-            /*if (x == tabuleiro.cursor[0] && y == tabuleiro.cursor[1])
-            {
-                Rectangle cursor = {x * LADO, y * LADO + ALTURA_HUD, LADO, LADO};
-                DrawRectangleLinesEx(cursor, 3, (selecionado ? RED : YELLOW));
-            }*/
-            
             // Desenha peças
             Color cor = CORES[tabuleiro->tabuleiro[x][y]];
             DrawCircle(MARGEM + x * LADO, MARGEM + y * LADO + ALTURA_HUD, RAIO, cor);
