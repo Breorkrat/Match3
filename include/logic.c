@@ -12,11 +12,14 @@
 #define MARGEM_JANELA_LARGURA 300
 #define MARGEM_JANELA_ALTURA 20
 #define ALTURA_HUD 85
-#define LARGURA COLUNAS*LADO + MARGEM_JANELA_LARGURA
-#define ALTURA LINHAS*LADO + MARGEM_JANELA_ALTURA+ALTURA_HUD
+//#define LARGURA COLUNAS*LADO + MARGEM_JANELA_LARGURA
+//#define ALTURA LINHAS*LADO + MARGEM_JANELA_ALTURA+ALTURA_HUD-5
+#define LARGURA 900
+#define ALTURA 500
 #define NUMTIPOS 6
 #define MAGNITUDE_PTO_DISPLAY 21
 #define MAX_TEXTO_BOTAO 100
+#define INICIO_MATRIZ LARGURA/2 - (COLUNAS*(RAIO+MARGEM)/2)
 
 char modo_edicao = 0;
 const Color HUDCOLOR = {10, 10, 10, 180};
@@ -58,31 +61,32 @@ typedef struct Button {
 Telas tela;
 
 Button botãoJogar = {
-    (Rectangle){LARGURA / 2 - 400, 160, 310, 80},
+    (Rectangle){5, 130, 290, 65},
     "Novo jogo",
-    LARGURA / 2 - 350,
-    180,
+    55,
+    145,
     40,
     NOVOJOGO
     };
 
+Button escolherNivel = {
+    (Rectangle){5, 255, 320, 65},
+    "Escolher nível",
+    20,
+    270,
+    40,
+    NIVEIS
+};
+
 Button botãoSair = {
-    (Rectangle){LARGURA/2-330, 410, 180, 80},
-    "Sair",
-    LARGURA/2-280,
-    430,
+    (Rectangle){5, 380, 350, 65},
+    "Sair do jogo",
+    55,
+    395,
     40,
     EXIT
 };
 
-Button escolherNivel = {
-    (Rectangle){LARGURA / 2 - 400, 285, 310, 80},
-    "Escolher nível",
-    LARGURA/2-390,
-    305,
-    40,
-    NIVEIS
-};
 
 Button botãoMenu = {
     (Rectangle){LARGURA/2-400, 285, 310, 80},
@@ -93,22 +97,22 @@ Button botãoMenu = {
     MENU
 };
 
-Button botãoFimMenu = {
-    (Rectangle){MARGEM + 10, ALTURA_HUD + MARGEM * 8, 250, 40},
-    "Voltar ao menu",
-    MARGEM+20,
-    ALTURA_HUD+MARGEM*8+4,
-    30,
-    MENU
-};
-
 Button botãoNovoJogo = {
-    (Rectangle){MARGEM + 10, ALTURA_HUD + MARGEM * 6, 175, 40},
+    (Rectangle){40, ALTURA/2 - 40, 175, 43},
     "Novo jogo",
-    MARGEM+20,
-    ALTURA_HUD+MARGEM*6+4,
+    50,
+    ALTURA/2 - 33,
     30,
     NOVOJOGO
+};
+
+Button botãoFimMenu = {
+    (Rectangle){40, ALTURA/2+13, 250, 43},
+    "Voltar ao menu",
+    50,
+    ALTURA/2 + 20,
+    30,
+    MENU
 };
 
 Button botãoContinuar = {
@@ -223,24 +227,24 @@ void drawHud(game tabuleiro){
     DrawRectangle(0, 0, LARGURA, ALTURA_HUD, HUDCOLOR);
     char temp[MAGNITUDE_PTO_DISPLAY];
     if (tabuleiro.objetivos.maxJogadas <= 0){
-        DrawText("Movimentos: ", 5, 9, 20, GREEN);
+        DrawText("Movimentos: ", 25, 9, 20, GREEN);
         sprintf(temp, "%d", tabuleiro.movimentos);
-        DrawText(temp, 130, 10, 20, GREEN);
+        DrawText(temp, 150, 10, 20, GREEN);
     }
     else {
-        DrawText("Movimentos\nrestantes: ", 5, 9, 20, GREEN);
+        DrawText("Movimentos\nrestantes: ", 25, 9, 20, GREEN);
         sprintf(temp, "%d", tabuleiro.objetivos.maxJogadas - tabuleiro.movimentos);
-        DrawText(temp, 130, 30, 20, GREEN);
+        DrawText(temp, 150, 30, 20, GREEN);
     }
 
-    DrawText("Pontuação: ", 5, 60, 20, GREEN);
+    DrawText("Pontuação: ", 25, 60, 20, GREEN);
     sprintf(temp, "%d", tabuleiro.pontos);
-    DrawText(temp, 130, 60, 20, GREEN);
+    DrawText(temp, 150, 60, 20, GREEN);
 
     for(int i = 1; i <= NUMTIPOS; i++){
         sprintf(temp, "%d", tabuleiro.pecas[i]);
-        DrawText(temp, 125+i*LADO*1.9, 28, 20, WHITE);
-        DrawCircle(170+i*LADO*1.9, 35, RAIO, CORES[i]);
+        DrawText(temp, 145+i*LADO*1.9, 28, 20, WHITE);
+        DrawCircle(190+i*LADO*1.9, 35, RAIO, CORES[i]);
     }
 }
 
@@ -260,9 +264,9 @@ void drawGrid(game* tabuleiro)
         {
             // Desenha peças
             Color cor = CORES[tabuleiro->tabuleiro[x][y]];
-            DrawCircle((MARGEM_JANELA_LARGURA / 2) + MARGEM + x * LADO, MARGEM + y * LADO + ALTURA_HUD, RAIO, cor);
+            DrawCircle(INICIO_MATRIZ + x * LADO, MARGEM + y * LADO + ALTURA_HUD, RAIO, cor);
 
-            Rectangle pecaPos = {(MARGEM_JANELA_LARGURA / 2) + x * LADO,  y * LADO + ALTURA_HUD, LADO, LADO};
+            Rectangle pecaPos = {INICIO_MATRIZ + x * LADO - MARGEM,  y * LADO + ALTURA_HUD, LADO, LADO};
             if (tabuleiro->cursor[0] == x && tabuleiro->cursor[1] == y) {
                 DrawRectangleLinesEx(pecaPos, 3, YELLOW);
                 if (changeSelect && tabuleiro->selecionado) {
@@ -273,7 +277,7 @@ void drawGrid(game* tabuleiro)
         }
     }
     if(tabuleiro->selecionado) {
-        Rectangle sel = {(MARGEM_JANELA_LARGURA/2) + tabuleiro->selecao[0]*LADO+2, tabuleiro->selecao[1]*LADO+2 + ALTURA_HUD, LADO-4, LADO-4};
+        Rectangle sel = {INICIO_MATRIZ + tabuleiro->selecao[0]*LADO - MARGEM + 2, tabuleiro->selecao[1]*LADO + ALTURA_HUD + 2, LADO - 4, LADO - 4};
         DrawRectangleLinesEx(sel, 2, RED);
     }
 }
@@ -286,29 +290,29 @@ void draw(game* tabuleiro){
     drawHud(*tabuleiro);
     if(modo_edicao) {
         char temp[MAGNITUDE_PTO_DISPLAY];
-        DrawRectangleLinesEx((Rectangle){(MARGEM_JANELA_LARGURA/2), ALTURA_HUD, COLUNAS*LADO, LINHAS*LADO}, 3, YELLOW);
-        DrawText("Modo de Edição\nAperte F1 para sair", 5, ALTURA_HUD + 15, 15, WHITE);
-        DrawText("Objetivo atual de\npontos:", 5, ALTURA_HUD + 65, 15, WHITE);
+        DrawRectangleLinesEx((Rectangle){INICIO_MATRIZ-MARGEM, ALTURA_HUD, COLUNAS*LADO, LINHAS*LADO}, 3, YELLOW);
+        DrawText("Modo de Edição\nAperte F1 para sair", 25, ALTURA_HUD + 15, 15, WHITE);
+        DrawText("Objetivo atual de\npontos:", 25, ALTURA_HUD + 65, 15, WHITE);
         sprintf(temp, "%d", tabuleiro->objetivos.objPontos);
-        DrawText(temp, 65, ALTURA_HUD + 82, 15, WHITE);
+        DrawText(temp, 85, ALTURA_HUD + 82, 15, WHITE);
 
-        DrawText("Limite atual de\nmovimentos:", 5, ALTURA_HUD + 115, 15, WHITE);
+        DrawText("Limite atual de\nmovimentos:", 25, ALTURA_HUD + 115, 15, WHITE);
         sprintf(temp, "%d", tabuleiro->objetivos.maxJogadas);
-        DrawText(temp, 95, ALTURA_HUD + 133, 15, WHITE);
+        DrawText(temp, 115, ALTURA_HUD + 133, 15, WHITE);
 
-        DrawText("Peça do\nobjetivo:", 5, ALTURA_HUD + 175, 15, WHITE);
-        DrawCircle(85, ALTURA_HUD + 190, 2*RAIO/3, CORES[tabuleiro->objetivos.objPeca]);
+        DrawText("Peça do\nobjetivo:", 25, ALTURA_HUD + 175, 15, WHITE);
+        DrawCircle(105, ALTURA_HUD + 190, 2*RAIO/3, CORES[tabuleiro->objetivos.objPeca]);
 
-        DrawText("Quantidade:", 5, ALTURA_HUD + 225, 15, WHITE);
+        DrawText("Quantidade:", 25, ALTURA_HUD + 225, 15, WHITE);
         sprintf(temp, "%d", tabuleiro->objetivos.objPecaQuant);
-        DrawText(temp, 95, ALTURA_HUD + 224, 15, WHITE);
+        DrawText(temp, 115, ALTURA_HUD + 224, 15, WHITE);
 
-        DrawText("Z e X para\ntrocar as\npeças\n\n"
-        "A e S para\nmodificar limite\nde pontos\n\n"
-        "Q e W para alterar\no limite de\nmovimentos\n\n"
-        "C e V para alterar\na peça do\nobjetivo\n\n"
-        "D e F para alterar\na quantidade\npara objetivo\nde peças\n\n"
-        "F2 para salvar\no nível", MARGEM_JANELA_LARGURA/2 + COLUNAS*LADO + 10, ALTURA_HUD + 5, 15, WHITE);
+        DrawText("Z e X para trocar\nas peças\n\n"
+        "A e S para modificar\no limite de pontos\n\n"
+        "Q e W para alterar\no limite de movimentos\n\n"
+        "C e V para alterar\na peça do objetivo\n\n"
+        "D e F para alterar\na quantidade de\npeças do objetivo\n\n"
+        "F2 para salvar\no nível", INICIO_MATRIZ + COLUNAS*LADO + 10, ALTURA_HUD + 5, 15, WHITE);
      }
     
     EndDrawing();
@@ -349,7 +353,7 @@ void updateMatches(game* tabuleiro)
                 DrawTexture(background, 0, 0, WHITE);
                 drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
-                Rectangle cursor = {(MARGEM_JANELA_LARGURA/2) + (x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
+                Rectangle cursor = {INICIO_MATRIZ - MARGEM + (x+min+1) * LADO, y * LADO + ALTURA_HUD, LADO*(end-min), LADO};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
                 EndDrawing();
                 usleep(500000);
@@ -390,7 +394,7 @@ void updateMatches(game* tabuleiro)
                 DrawTexture(background, 0, 0, WHITE);
                 drawGrid(tabuleiro);
                 drawHud(*tabuleiro);
-                Rectangle cursor = {(MARGEM_JANELA_LARGURA/2) + x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
+                Rectangle cursor = {INICIO_MATRIZ - MARGEM + x * LADO, (y+min+1) * LADO + ALTURA_HUD, LADO, LADO*(end-min)};
                 DrawRectangleLinesEx(cursor, 2, GREEN);
                 EndDrawing();
                 usleep(500000);

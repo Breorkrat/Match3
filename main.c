@@ -11,17 +11,23 @@ int main(void)
     tela = MENU;
     InitWindow(LARGURA, ALTURA, "Match3");
     
+    Texture2D imgTitle = LoadTexture("images/Title.png");
     background = LoadTexture("images/background.png");
     SetTargetFPS(60);
-    int timerMenu = 0;
+    int loop60 = 0, direcao = 1;
 
     Texture2D bg;
 
     while (!WindowShouldClose())
     {
-        if (timerMenu < 60) {
-            timerMenu++;
-        } else if (tela == LOGO) {
+        loop60 += (direcao);
+        if (loop60 == 60 || loop60 == 0) {
+            if (direcao == -1) direcao = 1;
+            else direcao = -1;
+        }
+            
+
+        if (tela == LOGO && loop60 == 60) {
             ClearBackground(BLACK);
             tela = MENU;
         }
@@ -37,9 +43,9 @@ int main(void)
                 BeginDrawing();
                 ClearBackground(BLACK);
                 DrawTexture(background, 0, 0, WHITE);
-                DrawRectangle(0, 0, LARGURA, ALTURA, (Color){0, 0, 0, 100});
-                DrawText("Match 3", LARGURA/2-360, 40, 65, WHITE);
-
+                DrawRectanglePro((Rectangle){0, 0, LARGURA, ALTURA}, (Vector2){300, 300}, 80, BLACK);
+                DrawLineEx((Vector2){305, 0}, (Vector2){390, ALTURA}, 8, WHITE);
+                DrawTextureEx(imgTitle, (Vector2){480-loop60/2, 50-loop60/7}, 350+(loop60/6.0 + 2.8), 1+(loop60/300.0 - 0.3), WHITE);
                 drawButton(botãoJogar);
                 drawButton(escolherNivel);
                 drawButton(botãoSair);
@@ -81,7 +87,7 @@ int main(void)
                 }
 
                 if(IsKeyPressed(KEY_ENTER)) tela = PAUSE;
-                tabuleiro.cursor[0] = (GetMouseX()-(MARGEM_JANELA_LARGURA/2))/LADO;
+                tabuleiro.cursor[0] = (GetMouseX()-(INICIO_MATRIZ - RAIO))/LADO;
                 tabuleiro.cursor[1] = (GetMouseY()-ALTURA_HUD)/LADO;
                 if (!modo_edicao) updateMatches(&tabuleiro);
                 draw(&tabuleiro);
@@ -143,8 +149,9 @@ int main(void)
                 ClearBackground(BLACK);
                 DrawTexture(bg, 0, 0, WHITE);
                 DrawRectangle(MARGEM, MARGEM, LARGURA-2*MARGEM, ALTURA-2*MARGEM, (Color){0, 0, 0, 200});
+                DrawRectangleGradientV(MARGEM, MARGEM, LARGURA-2*MARGEM, ALTURA-2*MARGEM, BLACK, (Color){16, 88, 00, 150});
                 DrawRectangleLinesEx((Rectangle){MARGEM, MARGEM, LARGURA-2*MARGEM, ALTURA-2*MARGEM}, 4, WHITE);
-                DrawText("Vitória!", LARGURA/2-360, 40, 65, VERDE);
+                DrawText("Vitória!", LARGURA/2-115, 40, 65, VERDE);
 
                 DrawRectangleLinesEx((Rectangle){LARGURA-MARGEM_JANELA_LARGURA-30, ALTURA_HUD+20, MARGEM_JANELA_LARGURA-20, ALTURA-150}, 2, WHITE);
                 DrawText("Highscores", LARGURA-MARGEM_JANELA_LARGURA+45, ALTURA_HUD+30, 25, WHITE);
@@ -160,8 +167,9 @@ int main(void)
                 ClearBackground(BLACK);
                 DrawTexture(bg, 0, 0, WHITE);
                 DrawRectangle(MARGEM, MARGEM, LARGURA-2*MARGEM, ALTURA-2*MARGEM, (Color){30, 0, 0, 200});
+                DrawRectangleGradientV(MARGEM, MARGEM, LARGURA-2*MARGEM, ALTURA-2*MARGEM, BLACK, (Color){85, 14, 0, 100});
                 DrawRectangleLinesEx((Rectangle){MARGEM, MARGEM, LARGURA-2*MARGEM, ALTURA-2*MARGEM}, 4, WHITE);
-                DrawText("Derrota!", LARGURA/2-380, 40, 65, VERMELHO);
+                DrawText("Derrota!", LARGURA/2-138, 40, 65, VERMELHO);
 
                 DrawRectangleLinesEx((Rectangle){LARGURA-MARGEM_JANELA_LARGURA-30, ALTURA_HUD+20, MARGEM_JANELA_LARGURA-20, ALTURA-150}, 2, WHITE);
                 DrawText("Highscores", LARGURA-MARGEM_JANELA_LARGURA+45, ALTURA_HUD+30, 25, WHITE);
