@@ -15,7 +15,8 @@
 		"consts.h": "c",
 		"time.h": "c",
 		"stdio.h": "c",
-		"*.m": "c"
+		"*.m": "c",
+		"random": "c"
 	},
 	"C_Cpp.errorSquiggles": "disabled"
 }
