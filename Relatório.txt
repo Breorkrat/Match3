@@ -19,6 +19,11 @@ O menu inicial também apresenta uma tela para carregamento de níveis, onde é 
 para carregar o nível.
 Por fim, o menu apresenta um botão para sair do jogo, que finaliza a execução do programa.
 
+O programa é separado em três arquivos:
+    main.c;             Arquivo com o loop principal;
+    logic.c;            Arquivo com as funções do programa;
+    logic.h;            Interface para main.c ter acesso às funções principais de logic.c
+    
 As constantes usadas são:
 LINHAS 8                    Quantidade de linhas de peças
 COLUNAS 10                  Quantiadde de colunas de peças
@@ -76,7 +81,7 @@ As demais funções criadas são:
 void inicializarMatriz(game*);      Recebe o endereço de uma estrutura jogo e inicializa seus valores de 1 até NUMTIPOS.
 void inicializarJogo(game*);        Além de inicializar a matriz com a função acima, inicializa os objetivos e pontuação como 0.
 void swapCells(game*);              Dado um ponteiro para uma estrutura game, altera a peça em tabuleiro.cursor e tabuleiro.selecao
-int matchesValidos(game);           Retorna 1 se o jogo possui algum match válido, caso contrário, retorna 0.
+int checarMatches(game);            Retorna 1 se o jogo possui algum match válido, caso contrário, retorna 0.
 int testSwap(game*);                Valida uma troca de peças, verificando se a peça é adjacente, forma um match e se o modo de edição está desativado.
                                     Se a troca formar um match, a executa. Caso contrário ignora.
 
@@ -89,5 +94,10 @@ void draw(game*);                   Começa a operação de desenho, executa as 
 void bubbleClear(game*, int, int);  Recebe um tabuleiro e uma posição x, y de uma peça limpa. Então, a move até o topo do tabuleiro e gera uma
                                     peça nova. O nome vem da inspiração do algorítmo de bubblesort, onde um elemento é levado até o topo por trocas.
 
-                
+void updateMatches(game*);          Procura por matches e os atualiza, limpando cada peça do match e usando bubbleClear() para atualizar o tabuleiro.
+Texture2D screenshot();             Retorna uma screenshot da tela atual, atualizando os dois buffers de desenho para que ambos fiquem iguais antes da screenshot ser tirada.
+void drawButton(Button botão);      Explicada acima.
 
+No arquivo principal são carregadas as imagens de background e a logo, que é brevemente exibida antes de ir ao menu.
+A tela a ser exibida varia por um switch(tela) dentro do loop principal. Lá, cada tela tem sua respectiva funcionalidade, como a do jogo que
+procura por matches e atualiza a posição do cursor, ou a da seleção de níveis, que aguarda uma arquivo a ser arrastado e o processa como nível.
