@@ -24,7 +24,6 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-        printf("%d, %d, %d, %d, %d, %d, %d\n", tabuleiro.pecas[0], tabuleiro.pecas[1], tabuleiro.pecas[2], tabuleiro.pecas[3], tabuleiro.pecas[4], tabuleiro.pecas[5], tabuleiro.pecas[6]);
         // Loop usado para animações (não implementado) e logo
         loop60 += (direcao);
         if (loop60 == 60 || loop60 == 0) {
