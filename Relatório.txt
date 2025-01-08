@@ -1,0 +1,93 @@
+Match3: Matheus Krzesinski da Silva e Nana Kweku Dei Yobo
+O objetivo é criar um jogo no estilo Match3, onde é gerado um tabuleiro com peças aleatórias que podem
+ser movidas pelo usuário apenas se forem formar trios. Os trios são eliminados e as peças acima caem para
+preencher o lugar, gerando novas peças acima. O jogo pode ter objetivos específicos por nível, como pontuação
+alvo, limite de jogadas ou peças específicas à serem limpas.
+O jogo apresenta uma tela inicial com créditos e logo depois um menu, onde se pode começar um novo jogo sem
+objetivos. O controle é dado pelo mouse, onde um cursor fixa na peça selecionada por um clique. Ao clicar em
+outra peça adjacente, é verificado se o movimento resultaria em match, se sim, as atualiza, se não, ignora.
+E apresentado um menu de pause ao apertar a tecla Enter, onde se pode continuar o jogo ou voltar ao menu.
+Outra funcionalidade dentro de jogo é um editor de níveis ao apertar a tecla F1, onde são dadas as seguintes
+opções:
+    Mudança de valor e posição de quaisquer peças no tabuleiro
+    Controle da pontuação alvo
+    Controle do limite de movimentos
+    Controle de uma peça específica para objetivo, assim como sua quantidade a ser limpa.
+
+Apertar a tecla F2 salva o nível como um arquivo "save.m3s", dentro da pasta "saves".
+O menu inicial também apresenta uma tela para carregamento de níveis, onde é possível arrastar algum arquivo salvo
+para carregar o nível.
+Por fim, o menu apresenta um botão para sair do jogo, que finaliza a execução do programa.
+
+As constantes usadas são:
+LINHAS 8                    Quantidade de linhas de peças
+COLUNAS 10                  Quantiadde de colunas de peças
+RAIO 20                     Raio das peças em pixels
+LADO (2*RAIO+10)            Lado de cada "célula", bloco reservado para a peça
+MARGEM LADO/2               Margem das células
+MARGEM_JANELA_LARGURA 300   Margem horizontal da janela
+MARGEM_JANELA_ALTURA 20     Margem vertical da janela
+ALTURA_HUD 85               Altura do HUD
+LARGURA 900                 Largura da tela
+ALTURA 500                  Altura da tela
+NUMTIPOS 6                  Tipos de peças
+MAGNITUDE_PTO_DISPLAY 21    Limite em bytes para o texto da pontuação
+MAX_TEXTO_BOTAO 100         Limite em bytes para o texto dos botões
+INICIO_MATRIZ LARGURA/2 - (COLUNAS*(RAIO+MARGEM)/2)     Posição em pixels do início da matriz, ou seja, a posição x do centro das peças mais à esquerda
+
+
+As especificações do nível, assim como os níveis salvos, são dadas em duas estruturas:
+
+objectives:
+    int maxJogadas;                 // Máximo de jogadas do nível
+    int objPontos;                  // Objetivo de pontuação do nível
+    int objPeca;                    // Peça escolhida como objetivo do nível
+    int objPecaQuant;               // Quantidade de peças do objetivo a serem quebradas
+
+game:
+    int tabuleiro[COLUNAS][LINHAS]; // Valor das peças que varia de 0 à NUMTIPOS
+    int cursor[2];                  // Índice da célula sob o cursor
+    char selecionado;               // Cursor está selecionando? 1 ou 0
+    int selecao[2];                 // Incice da célula selecionada.
+    int movimentos;                 // Contador de movimentos
+    int pontos;                     // Contador de pontos
+    int pecas[NUMTIPOS+1];          // Contador de quantas peças de tipo `índice` foram limpas
+    objectives objetivos;           // Objetivos do nível
+
+As diferentes telas são dadas pelo enum: Telas { LOGO = 0, MENU, NOVOJOGO, JOGO, NIVEIS, PAUSE, WIN, LOSE, EXIT}.
+
+Para a criação dos botões interativos, foi criada uma estrutura Button para a definição de cada botão, da forma:
+Button:
+    Rectangle ret;                  // Retângulo de fundo do botão
+    char texto[MAX_TEXTO_BOTAO];    // Texto do botão
+    int txtX;                       // Posição X do texto
+    int txtY;                       // Posição Y do texo
+    int tamTexto;                   // Tamanho de fonte do texto
+    Telas redirect;                 // Tela para redirecionar ao clicar
+
+E uma função para a criação dos botões baseados nessa estrutura, drawButton(), que desenha o retângulo do fundo,
+uma margem cinza ao seu redor, o texto por cima e checa pela colisão do mouse, onde caso ocorra, aumenta o tamanho
+da borda e a deixa branca. Também checa por cliques no botão, que redireciona a tela para Button.redirect.
+
+Ao completar ou falhar um objetivo, o jogador é apresentado com uma tela de vitória ou derrota, que apresenta sua pontuação final e dá
+opções para começar um novo jogo ou voltar ao menu.
+
+As demais funções criadas são:
+void inicializarMatriz(game*);      Recebe o endereço de uma estrutura jogo e inicializa seus valores de 1 até NUMTIPOS.
+void inicializarJogo(game*);        Além de inicializar a matriz com a função acima, inicializa os objetivos e pontuação como 0.
+void swapCells(game*);              Dado um ponteiro para uma estrutura game, altera a peça em tabuleiro.cursor e tabuleiro.selecao
+int matchesValidos(game);           Retorna 1 se o jogo possui algum match válido, caso contrário, retorna 0.
+int testSwap(game*);                Valida uma troca de peças, verificando se a peça é adjacente, forma um match e se o modo de edição está desativado.
+                                    Se a troca formar um match, a executa. Caso contrário ignora.
+
+void drawHud(game);                 Desenha o HUD no buffer
+void drawGrid(game*);               Desenha o tabuleiro no buffer e atualiza o estado de seleção de peças se um clique for realizado.
+void drawEdit(game*);               Desenha os elementos mostrados no modo de edição no buffer.
+void draw(game*);                   Começa a operação de desenho, executa as funções de carregamento dos elementos do
+                                    HUD, Tabuleiro e Edição (caso o modo de edição esteja ativo), e desenha o buffer na tela.
+
+void bubbleClear(game*, int, int);  Recebe um tabuleiro e uma posição x, y de uma peça limpa. Então, a move até o topo do tabuleiro e gera uma
+                                    peça nova. O nome vem da inspiração do algorítmo de bubblesort, onde um elemento é levado até o topo por trocas.
+
+                
+

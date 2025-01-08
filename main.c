@@ -120,7 +120,7 @@ int main(void)
                 draw(&tabuleiro);
 
                 // Checa condições de vitória/derrota se não estiver no modo de edição
-                if(!modo_edicao && !checarMatches(tabuleiro)) {
+                if(!modo_edicao && !matchesValidos(tabuleiro)) {
                     if(tabuleiro.objetivos.maxJogadas > 0 &&
                         tabuleiro.objetivos.maxJogadas - tabuleiro.movimentos <= 0) {
                         tela = LOSE;

@@ -347,34 +347,6 @@ void bubbleClear(game* tabuleiro, int x, int y){
     tabuleiro->tabuleiro[x][i] = GetRandomValue(1, NUMTIPOS);
 }
 
-// Verifica se há algum match no tabuleiro, retorna 1 caso houver ou 0 se não.
-char checarMatches(game tabuleiro){
-    for (int x = 1; x < COLUNAS - 1; x++)
-    {
-        for (int y = 0; y < LINHAS; y++)
-        {
-            if (tabuleiro.tabuleiro[x][y] == tabuleiro.tabuleiro[x-1][y] && 
-                tabuleiro.tabuleiro[x][y] == tabuleiro.tabuleiro[x+1][y])
-            {
-                return 1;
-            }
-        }
-    }
-    // Checagem na vertical
-    for (int x = 0; x < COLUNAS; x++)
-    {
-        for (int y = 1; y < LINHAS - 1; y++)
-        {
-            if (tabuleiro.tabuleiro[x][y] == tabuleiro.tabuleiro[x][y-1] && 
-                tabuleiro.tabuleiro[x][y] == tabuleiro.tabuleiro[x][y+1])
-            {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
 // Verifica por matches e os atualiza, assim como os pontos
 void updateMatches(game* tabuleiro)
 {
