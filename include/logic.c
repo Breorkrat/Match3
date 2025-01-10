@@ -90,9 +90,9 @@ Button botãoSair = {
 };
 
 Button botãoMenu = {
-    (Rectangle){LARGURA/2-100, 285, 310, 80},
+    (Rectangle){LARGURA/2-155, 285, 310, 80},
     "Menu inicial",
-    LARGURA/2-130,
+    LARGURA/2-115,
     305,
     40,
     MENU
@@ -117,9 +117,9 @@ Button botãoFimMenu = {
 };
 
 Button botãoContinuar = {
-    (Rectangle){LARGURA/2-400, 160, 310, 80},
+    (Rectangle){LARGURA/2-155, 160, 310, 80}, 
     "Continuar",
-    LARGURA/2-345,
+    LARGURA/2-105,
     180,
     40,
     JOGO

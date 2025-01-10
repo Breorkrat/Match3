@@ -150,7 +150,7 @@ int main(void)
                 DrawTexture(background, 0, 0, WHITE);
                 DrawRectangle(0, 0, LARGURA, ALTURA, (Color){0, 0, 0, 100});
 
-                DrawText("Arraste o arquivo de jogo aqui", LARGURA/2-200, 40, 30, WHITE);
+                DrawText("Arraste o arquivo de jogo aqui", LARGURA/2-210, 40, 30, WHITE);
 
                 drawButton(botãoMenu);
 
@@ -175,7 +175,7 @@ int main(void)
                 DrawTexture(background, 0, 0, WHITE);
                 DrawRectangle(0, 0, LARGURA, ALTURA, (Color){0, 0, 0, 100});
 
-                DrawText("PAUSE", LARGURA/2-360, 40, 65, WHITE);
+                DrawText("PAUSE", LARGURA/2-105, 40, 65, WHITE);
 
                 drawButton(botãoContinuar);
                 drawButton(botãoMenu);
@@ -208,7 +208,7 @@ int main(void)
                 EndDrawing();
                 break;
 
-            case LOSE:
+            case LOSE: 
             BeginDrawing();
                 ClearBackground(BLACK);
                 // Fundo
