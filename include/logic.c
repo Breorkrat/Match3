@@ -61,8 +61,8 @@ typedef struct Button {
 
 Telas tela;
 
-// Declaração dos botões
-Button botãoJogar = {
+// Declaraçao dos botoes
+Button botaoJogar = {
     (Rectangle){5, 130, 290, 65},
     "Novo jogo",
     55,
@@ -80,7 +80,7 @@ Button escolherNivel = {
     NIVEIS
 };
 
-Button botãoSair = {
+Button botaoSair = {
     (Rectangle){5, 380, 350, 65},
     "Sair do jogo",
     55,
@@ -89,16 +89,16 @@ Button botãoSair = {
     EXIT
 };
 
-Button botãoMenu = {
-    (Rectangle){LARGURA/2-100, 285, 310, 80},
+Button botaoMenu = {
+    (Rectangle){LARGURA/2-155, 285, 310, 80},
     "Menu inicial",
-    LARGURA/2-130,
+    LARGURA/2-115,
     305,
     40,
     MENU
 };
 
-Button botãoNovoJogo = {
+Button botaoNovoJogo = {
     (Rectangle){40, ALTURA/2 - 40, 175, 43},
     "Novo jogo",
     50,
@@ -107,7 +107,7 @@ Button botãoNovoJogo = {
     NOVOJOGO
 };
 
-Button botãoFimMenu = {
+Button botaoFimMenu = {
     (Rectangle){40, ALTURA/2+13, 250, 43},
     "Voltar ao menu",
     50,
@@ -116,15 +116,14 @@ Button botãoFimMenu = {
     MENU
 };
 
-Button botãoContinuar = {
-    (Rectangle){LARGURA/2-400, 160, 310, 80},
+Button botaoContinuar = {
+    (Rectangle){LARGURA/2-155, 160, 310, 80},
     "Continuar",
-    LARGURA/2-345,
+    LARGURA/2-105,
     180,
     40,
     JOGO
 };
-
 
 
 // Inicializa a matriz peças de um tabuleiro

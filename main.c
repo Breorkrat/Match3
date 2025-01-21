@@ -60,9 +60,9 @@ int main(void)
                 // Animada: DrawTextureEx(imgTitle, (Vector2){480-loop60/2, 50-loop60/7}, 350+(loop60/6.0 + 2.8), 1+(loop60/300.0 - 0.3), WHITE);
                 DrawTexture(imgTitle, 450, 50, WHITE);
                 // Botões
-                drawButton(botãoJogar);
+                drawButton(botaoJogar);
                 drawButton(escolherNivel);
-                drawButton(botãoSair);
+                drawButton(botaoSair);
                 EndDrawing();
                 break;
 
@@ -84,8 +84,8 @@ int main(void)
                     if(IsKeyPressed(KEY_X) && pecaAtual < NUMTIPOS) tabuleiro.tabuleiro[tabuleiro.cursor[0]][tabuleiro.cursor[1]]++;
 
                     // Trocar objetivo de movimentos
-                    if(IsKeyDown(KEY_A) && tabuleiro.objetivos.maxJogadas > 0) tabuleiro.objetivos.maxJogadas --;
-                    if(IsKeyDown(KEY_S)) tabuleiro.objetivos.maxJogadas ++;
+                    if(IsKeyPressed(KEY_A) && tabuleiro.objetivos.maxJogadas > 0) tabuleiro.objetivos.maxJogadas --;
+                    if(IsKeyPressed(KEY_S)) tabuleiro.objetivos.maxJogadas ++;
 
                     // Trocar objetivo de pontuação
                     if(IsKeyDown(KEY_Q) && tabuleiro.objetivos.objPontos > 0) tabuleiro.objetivos.objPontos -= 100;
@@ -121,25 +121,23 @@ int main(void)
 
                 // Checa condições de vitória/derrota se não estiver no modo de edição
                 if(!modo_edicao && !matchesValidos(tabuleiro)) {
-                    if(tabuleiro.objetivos.maxJogadas > 0 &&
-                        tabuleiro.objetivos.maxJogadas - tabuleiro.movimentos <= 0) {
-                        tela = LOSE;
-                        bg = screenshot();
-                    }
                     if(tabuleiro.objetivos.objPontos > 0 &&
                     tabuleiro.pontos >= tabuleiro.objetivos.objPontos) {
                         tela = WIN;
                         bg = screenshot();
                     }
-
-                    if(tabuleiro.objetivos.objPeca > 0 &&
+                    else if(tabuleiro.objetivos.objPeca > 0 &&
                     tabuleiro.objetivos.objPecaQuant > 0 &&
                     tabuleiro.pecas[tabuleiro.objetivos.objPeca] > tabuleiro.objetivos.objPecaQuant) {
                         tela = WIN;
                         bg = screenshot();
                     }
+                    else if(tabuleiro.objetivos.maxJogadas > 0 &&
+                        tabuleiro.objetivos.maxJogadas - tabuleiro.movimentos <= 0) {
+                        tela = LOSE;
+                        bg = screenshot();
+                    }
                 }
-
                 break;
 
             case NIVEIS:
@@ -150,9 +148,9 @@ int main(void)
                 DrawTexture(background, 0, 0, WHITE);
                 DrawRectangle(0, 0, LARGURA, ALTURA, (Color){0, 0, 0, 100});
 
-                DrawText("Arraste o arquivo de jogo aqui", LARGURA/2-200, 40, 30, WHITE);
+                DrawText("Arraste o arquivo de jogo aqui", LARGURA/2-210, 40, 30, WHITE);
 
-                drawButton(botãoMenu);
+                drawButton(botaoMenu);
 
                 // Carrega um arquivo arrastado à tela
                 if (IsFileDropped()){
@@ -175,10 +173,10 @@ int main(void)
                 DrawTexture(background, 0, 0, WHITE);
                 DrawRectangle(0, 0, LARGURA, ALTURA, (Color){0, 0, 0, 100});
 
-                DrawText("PAUSE", LARGURA/2-360, 40, 65, WHITE);
+                DrawText("PAUSE", LARGURA/2-105, 40, 65, WHITE);
 
-                drawButton(botãoContinuar);
-                drawButton(botãoMenu);
+                drawButton(botaoContinuar);
+                drawButton(botaoMenu);
                 EndDrawing();
                 break;
 
@@ -203,8 +201,8 @@ int main(void)
                 // Escreve pontuação
                 DrawText(temp, LARGURA-MARGEM_JANELA_LARGURA+160, ALTURA-ALTURA_HUD, 20, WHITE);
 
-                drawButton(botãoNovoJogo);
-                drawButton(botãoFimMenu);
+                drawButton(botaoNovoJogo);
+                drawButton(botaoFimMenu);
                 EndDrawing();
                 break;
 
@@ -228,8 +226,8 @@ int main(void)
                 sprintf(temp, "%d", tabuleiro.pontos);
                 // Escreve pontuação
                 DrawText(temp, LARGURA-MARGEM_JANELA_LARGURA+160, ALTURA-ALTURA_HUD, 20, WHITE);
-                drawButton(botãoNovoJogo);
-                drawButton(botãoFimMenu);
+                drawButton(botaoNovoJogo);
+                drawButton(botaoFimMenu);
                 EndDrawing();
                 break;
 

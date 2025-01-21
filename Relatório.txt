@@ -36,7 +36,7 @@ ALTURA_HUD 85               Altura do HUD
 LARGURA 900                 Largura da tela
 ALTURA 500                  Altura da tela
 NUMTIPOS 6                  Tipos de peças
-MAGNITUDE_PTO_DISPLAY 21    Limite em bytes para o texto da pontuação
+MAGNITUDE_PTO_DISPLAY 21    Limite em bytes para o texto da  pontuação
 MAX_TEXTO_BOTAO 100         Limite em bytes para o texto dos botões
 INICIO_MATRIZ LARGURA/2 - (COLUNAS*(RAIO+MARGEM)/2)     Posição em pixels do início da matriz, ou seja, a posição x do centro das peças mais à esquerda
 
