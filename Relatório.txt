@@ -1,12 +1,12 @@
 Match3: Matheus Krzesinski da Silva e Nana Kweku Dei Yobo
 O objetivo é criar um jogo no estilo Match3, onde é gerado um tabuleiro com peças aleatórias que podem
-ser movidas pelo usuário apenas se forem formar trios. Os trios são eliminados e as peças acima caem para
+ser movidas pelo usuário apenas se forem formar trios. Os trios são eliminados e as peças caem para
 preencher o lugar, gerando novas peças acima. O jogo pode ter objetivos específicos por nível, como pontuação
 alvo, limite de jogadas ou peças específicas à serem limpas.
 O jogo apresenta uma tela inicial com créditos e logo depois um menu, onde se pode começar um novo jogo sem
 objetivos. O controle é dado pelo mouse, onde um cursor fixa na peça selecionada por um clique. Ao clicar em
 outra peça adjacente, é verificado se o movimento resultaria em match, se sim, as atualiza, se não, ignora.
-E apresentado um menu de pause ao apertar a tecla Enter, onde se pode continuar o jogo ou voltar ao menu.
+É apresentado um menu de pause ao apertar a tecla Enter, onde se pode continuar o jogo ou voltar ao menu.
 Outra funcionalidade dentro de jogo é um editor de níveis ao apertar a tecla F1, onde são dadas as seguintes
 opções:
     Mudança de valor e posição de quaisquer peças no tabuleiro

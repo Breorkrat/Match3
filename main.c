@@ -206,7 +206,7 @@ int main(void)
                 EndDrawing();
                 break;
 
-            case LOSE:
+            case LOSE: 
             BeginDrawing();
                 ClearBackground(BLACK);
                 // Fundo
